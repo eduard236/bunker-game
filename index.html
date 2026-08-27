@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0a0c0b">
+<title>Бункер - Постапокалипсис</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="atmo" aria-hidden="true">
+  <div class="atmo-noise"></div>
+  <div class="atmo-scan"></div>
+  <div class="atmo-vignette"></div>
+  <div class="radiation-wave w1"></div>
+  <div class="radiation-wave w2"></div>
+  <div class="radiation-wave w3"></div>
+</div>
+
+<div class="container">
+
+  <div class="topbar" aria-hidden="true">
+    <span>ОБЪЕКТ «ЗАРЯ-7» · ГОРИЗОНТ −12 · ГЕРМЕТИЗАЦИЯ: <b class="ok">НОРМА</b></span>
+    <span class="lamps"><i class="led led-g"></i><i class="led led-a"></i><i class="led led-r"></i></span>
+    <span>ФОН: <b class="ok">0.12 мкЗв/ч</b> · СВЯЗЬ: <b class="warn">НЕТ</b></span>
+  </div>
+
+  <header class="main-header">
+    <div class="tape" aria-hidden="true"></div>
+    <div class="radiation-symbol">☢</div>
+    <h1>БУНКЕР</h1>
+    <p class="subtitle">Выживание после конца света</p>
+    <div class="tape" aria-hidden="true"></div>
+  </header>
+
+  <div class="main-content">
+
+    <section class="game-setup panel-rivets">
+      <h2 class="setup-title">▮ ОНЛАЙН-КОМНАТА</h2>
+
+      <button class="rules-btn" id="createRoomBtn">🌐 СОЗДАТЬ КОМНАТУ (ОНЛАЙН)</button>
+      <button class="rules-btn" id="joinRoomBtn">🔗 ВОЙТИ ПО КОДУ</button>
+      <button class="rules-btn" id="rulesBtn">📖 ПРАВИЛА ИГРЫ</button>
+
+      <div class="support-section">
+        <button class="support-btn" id="supportBtn">💝 ПОДДЕРЖАТЬ ПРОЕКТ</button>
+      </div>
+    </section>
+
+    <section class="features">
+      <div class="feature">
+        <h4>🎲 Уникальные роли</h4>
+        <p>30 профессий, 28 состояний здоровья, 29 предметов багажа — комбинации почти не повторяются.</p>
+      </div>
+      <div class="feature">
+        <h4>📖 16 предысторий</h4>
+        <p>От ядерной зимы до Великого молчания — каждый раз новый конец света.</p>
+      </div>
+      <div class="feature">
+        <h4>🎯 Секретные миссии</h4>
+        <p>Личные цели всегда указывают на реальных игроков в комнате. В конце — автопроверка итогов.</p>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<!-- ПРАВИЛА -->
+<div id="rulesModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <h2>📖 ПРАВИЛА ИГРЫ "БУНКЕР"</h2>
+    <div class="rules-section">
+      <h3>🎯 Цель игры</h3>
+      <p>Вы - выжившие после апокалипсиса в одном бункере. Ресурсов на всех не хватит. Ваша цель - убедить других, что именно ВЫ должны остаться в бункере!</p>
+    </div>
+    <div class="rules-section">
+      <h3>👥 Подготовка</h3>
+      <ul>
+        <li>🌐 Создайте комнату и отправьте друзьям ссылку или код (2–15 игроков)</li>
+        <li>📖 Хост выбирает предысторию апокалипсиса</li>
+        <li>🎭 Каждый игрок получает случайную роль с уникальными характеристиками</li>
+      </ul>
+    </div>
+    <div class="rules-section">
+      <h3>🎭 Характеристики игроков</h3>
+      <ul>
+        <li><strong>Профессия</strong> - чем вы полезны для выживания</li>
+        <li><strong>Здоровье</strong> - ваше физическое состояние</li>
+        <li><strong>Фобия</strong> - чего вы боитесь</li>
+        <li><strong>Хобби</strong> - ваши дополнительные навыки</li>
+        <li><strong>Качество</strong> - черты характера</li>
+        <li><strong>Факт</strong> - уникальная информация о вас</li>
+        <li><strong>Багаж</strong> - что взяли с собой в бункер</li>
+      </ul>
+    </div>
+    <div class="rules-section">
+      <h3>🔄 Ход игры</h3>
+      <ol>
+        <li>📚 Прочитайте предысторию апокалипсиса</li>
+        <li>👀 Свою карточку видите только вы. Остальные видят «???», пока вы не нажмёте «👁 открыть всем» по каждой характеристике отдельно</li>
+        <li>💬 Начинается обсуждение - доказывайте свою ценность</li>
+        <li>🤝 Объединяйтесь, торгуйтесь, шантажируйте других игроков</li>
+        <li>🗳️ Каждый раунд хост голосованием изгоняет ОДНОГО игрока — отмечает кнопкой «🚪 Изгнан» на его карточке</li>
+        <li>⏭️ Игра заканчивается, когда в бункере остаётся половина от начального числа (округлённая вверх, минимум 1): 2→1 · 4→2 · 6→3 · 10→5 · 15→8</li>
+        <li>🏁 Затем хост жмёт «Итоги» — сайт раскроет миссии и автоматически проверит их выполнение</li>
+      </ol>
+    </div>
+    <div class="rules-section">
+      <h3>🎯 Секретные миссии</h3>
+      <p>Некоторые игроки получают секретные миссии. Миссия всегда указывает на характеристику, которая ЕСТЬ у одного из игроков в комнате. Кнопка «Моя миссия» открывается после подтверждения «я этот игрок» — чтобы никто не подсмотрел.</p>
+      <ul>
+        <li><strong>СПАСАТЕЛЬ</strong> - помочь выжить конкретному игроку</li>
+        <li><strong>ПРЕДАТЕЛЬ</strong> - добиться изгнания конкретного игрока</li>
+        <li><strong>СПЕЦИАЛИСТ</strong> - сохранить игрока с нужной профессией</li>
+        <li><strong>ХРАНИТЕЛЬ</strong> - защитить игрока с ценным багажом</li>
+        <li><strong>ЦЕЛИТЕЛЬ</strong> - помочь выжить игроку с проблемным здоровьем</li>
+      </ul>
+      <p>📊 Количество миссий: 2–3 игрока → 1 · 4–6 → 2 · 7–9 → 3 · 10–12 → 4 · 13–15 → 5</p>
+    </div>
+    <div class="rules-tip">
+      <p>⭐ Главное - не просто выжить, а убедить других в своей необходимости для будущего человечества!</p>
+    </div>
+  </div>
+</div>
+
+<!-- ПОДДЕРЖКА -->
+<div id="supportModal" class="modal">
+  <div class="modal-content support-modal">
+    <span class="close">&times;</span>
+    <h2>💝 Поддержать проект</h2>
+    <div class="support-content">
+      <p>Если вам нравится игра, вы можете поддержать её развитие!</p>
+      <div class="card-info">
+        <p>📱 Номер карты:</p>
+        <div class="card-number">
+          <span class="card-digits">2202 2081 5080 9037</span>
+          <button class="copy-btn" onclick="copyCardNumber()">📋 Копировать</button>
+        </div>
+        <p class="bank-info">Сбербанк</p>
+      </div>
+      <div class="support-thanks">
+        <p>💖 Спасибо за вашу поддержку! Каждый рубль помогает развивать проект.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="firebase-app-compat.js" defer></script>
+<script src="firebase-database-compat.js" defer></script>
+<script src="firebase-config.js" defer></script>
+<script src="script.js" defer></script>
+<script src="online.js" defer></script>
+</body>
+</html>
