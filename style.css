@@ -47,7 +47,7 @@ font-size:.72rem;letter-spacing:.12em;color:var(--muted);border-bottom:1px dashe
 h1{font-family:var(--font-disp);font-size:clamp(2.2rem,9vw,4.6rem);letter-spacing:.14em;color:var(--paper);
 text-shadow:0 0 22px rgba(255,182,72,.35),2px 2px 0 rgba(140,47,34,.8);margin-bottom:8px;word-break:keep-all}
 .subtitle{font-size:.85rem;color:var(--muted);letter-spacing:.42em;text-transform:uppercase}
-.tape{height:12px;margin:16px auto;max-width:520px;opacity:.75;border-radius:2px;
+.tape{height:12px;margin:16px 0;width:100%;opacity:.75;border-radius:2px;
 background:repeating-linear-gradient(45deg,#d9a520 0 14px,#151515 14px 28px)}
 /* ---------- панели ---------- */
 .panel-rivets{position:relative;background:linear-gradient(180deg,var(--steel2),var(--steel));border:1px solid var(--line);border-radius:10px;
