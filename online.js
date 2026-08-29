@@ -231,5 +231,27 @@ document.addEventListener('DOMContentLoaded', () => {
   if (bj) bj.addEventListener('click', () => window.joinRoomOnline());
   const m = location.search.match(/room=([A-Za-z0-9]+)/);
   if (m) { if (window.FB_OK) window.joinRoomOnline(m[1]); else toast('Онлайн не настроен: проверь файл firebase-config.js'); }
+
+// ============ РЕАЛЬНЫЙ СЧЁТЧИК ОНЛАЙНА ============
+if (window.FB_OK) {
+  const presenceRef = firebase.database().ref('/presence/' + myPid);
+  const connectedRef = firebase.database().ref('.info/connected');
+
+  // Когда пользователь заходит на сайт, записываем его в базу
+  connectedRef.on('value', (snap) => {
+    if (snap.val() === true) {
+      // Если он закрыл вкладку, запись удалится сама
+      presenceRef.onDisconnect().remove();
+      presenceRef.set(true);
+    }
+  });
+
+  // Следим за количеством людей в базе и обновляем счётчик
+  firebase.database().ref('/presence').on('value', (snap) => {
+    const count = snap.numChildren();
+    const el = document.getElementById('onlineCount');
+    if (el) el.textContent = count;
+  });
+}
 });
 })();
