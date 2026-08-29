@@ -35,6 +35,8 @@ function backstoryOptions(sel) {
 }
 
 function enterRoom(code) {
+  const onlineCounter = document.getElementById('bunker-online');
+  if (onlineCounter) onlineCounter.style.display = 'none';
   roomCode = code;
   roomRef = firebase.database().ref('rooms/' + code);
   roomRef.on('value', (snap) => {
@@ -46,6 +48,8 @@ function enterRoom(code) {
 }
 
 function leaveRoom(silent) {
+  const onlineCounter = document.getElementById('bunker-online');
+  if (onlineCounter) onlineCounter.style.display = 'flex';
   if (roomRef) roomRef.off();
   roomRef = null; roomData = null; roomCode = null;
   try { history.replaceState(null, '', location.pathname); } catch (e) {}
@@ -229,6 +233,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const bc = $on('createRoomBtn'), bj = $on('joinRoomBtn');
   if (bc) bc.addEventListener('click', () => window.createRoomOnline());
   if (bj) bj.addEventListener('click', () => window.joinRoomOnline());
+  if (location.search.indexOf('room=') !== -1) {
+  const onlineCounter = document.getElementById('bunker-online');
+  if (onlineCounter) onlineCounter.style.display = 'none';
+  }
   const m = location.search.match(/room=([A-Za-z0-9]+)/);
   if (m) { if (window.FB_OK) window.joinRoomOnline(m[1]); else toast('Онлайн не настроен: проверь файл firebase-config.js'); }
 

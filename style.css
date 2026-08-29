@@ -297,8 +297,8 @@ h1{font-size:1.8rem;letter-spacing:.08em}
 /* ---- Фиксированный счётчик онлайна ---- */
 .bunker-online {
   position: fixed;
-  top: 10px;
-  left: 12px; /* Хочешь слева? Поменяй на left: 12px */
+  bottom: 20px;
+  right: 20px; /* Хочешь слева? Поменяй на left: 12px */
   z-index: 999;
   display: flex;
   align-items: center;
@@ -338,8 +338,8 @@ h1{font-size:1.8rem;letter-spacing:.08em}
 /* Мобильная адаптация */
 @media (max-width: 768px) {
   .bunker-online {
-    top: 6px;
-    left: 6px;
+    bottom: 10px;
+    right: 10px;
     font-size: 0.65rem;
     padding: 6px 8px;
   }
