@@ -5,8 +5,8 @@ const TRAIT_KEYS = [
   ['hobby', 'Хобби'], ['trait', 'Качество'], ['fact', 'Факт'], ['luggage', 'Багаж']
 ];
 
-let myPid = sessionStorage.getItem('bunker-pid');
-if (!myPid) { myPid = 'p' + Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4); sessionStorage.setItem('bunker-pid', myPid); }
+let myPid = localStorage.getItem('bunker-pid');
+if (!myPid) { myPid = 'p' + Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4); localStorage.setItem('bunker-pid', myPid); }
 
 let roomRef = null, roomCode = null, roomData = null;
 const $on = (id) => document.getElementById(id);
