@@ -129,7 +129,7 @@ function renderLobby(mc) {
     '<div class="invite-box"><p>Отправьте друзьям ссылку или код:</p><div class="invite-line"><span class="invite-link">' + esc(link) + '</span>' +
     '<button class="action-btn" id="olCopyLink">📋 Ссылка</button><button class="action-btn" id="olCopyCode">🔑 Код ' + roomCode + '</button></div></div>' +
     '<div class="timer-box" id="room-timer-box"><strong>Комната истекает через:</strong> <span id="room-timer">05:00</span></div>' +
-'<div class="lobby-players"><h3>Выжившие (' + list.length + '/15):</h3>' +
+    '<div class="lobby-players"><h3>Выжившие (' + list.length + '/15):</h3>' +
     list.map(p => '<div class="lobby-player">' + (p.index + 1) + '. ' + esc(p.name) + (p.pid === myPid ? ' (вы)' : '') + (p.pid === roomData.hostId ? ' 👑' : '') + '</div>').join('') + '</div>' +
     (isHost()
       ? '<div class="setting-card"><h3>Предыстория</h3><select id="olBackstory">' + backstoryOptions(roomData.backstoryIndex || 0) + '</select></div>' +
@@ -140,12 +140,12 @@ function renderLobby(mc) {
   $on('olCopyLink').addEventListener('click', () => copyText(link, 'Ссылка скопирована'));
   $on('olCopyCode').addEventListener('click', () => copyText(roomCode, 'Код скопирован'));
   $on('olLeave').addEventListener('click', () => leaveRoom());
-    if (isHost()) {
+  if (isHost()) {
     $on('olBackstory').addEventListener('change', (e) => roomRef.update({ backstoryIndex: parseInt(e.target.value, 10) }));
     const st = $on('olStart'); if (st) st.addEventListener('click', startOnlineGame);
   }
 
-    // ===== ТАЙМЕР КОМНАТЫ (5 минут) =====
+  // ===== ТАЙМЕР КОМНАТЫ (5 минут) =====
   const timerEl = document.getElementById('room-timer');
   if (timerEl && roomData.expiresAt) {
     let timerInterval;
@@ -163,10 +163,6 @@ function renderLobby(mc) {
         const sec = Math.floor((diff % 60000) / 1000);
         timerEl.textContent = String(min).padStart(2, '0') + ':' + String(sec).padStart(2, '0');
       }
-    };
-    updateTimer();
-    timerInterval = setInterval(updateTimer, 1000);
-  }
     };
     updateTimer();
     timerInterval = setInterval(updateTimer, 1000);
@@ -262,46 +258,43 @@ document.addEventListener('DOMContentLoaded', () => {
   if (bc) bc.addEventListener('click', () => window.createRoomOnline());
   if (bj) bj.addEventListener('click', () => window.joinRoomOnline());
   if (location.search.indexOf('room=') !== -1) {
-  const onlineCounter = document.getElementById('bunker-online');
-  if (onlineCounter) onlineCounter.style.display = 'none';
+    const onlineCounter = document.getElementById('bunker-online');
+    if (onlineCounter) onlineCounter.style.display = 'none';
   }
   const m = location.search.match(/room=([A-Za-z0-9]+)/);
   if (m) { if (window.FB_OK) window.joinRoomOnline(m[1]); else toast('Онлайн не настроен: проверь файл firebase-config.js'); }
 
-// ============ РЕАЛЬНЫЙ СЧЁТЧИК ОНЛАЙНА ============
-if (window.FB_OK) {
-  // Проверяем все комнаты и удаляем просроченные
-  const roomsRef = firebase.database().ref('rooms');
-  roomsRef.once('value').then((snap) => {
-    const now = Date.now();
-    snap.forEach((child) => {
-      const room = child.val();
-      if (room && room.expiresAt && now > room.expiresAt) {
-        // Если время истекло — удаляем комнату
-        child.ref.remove();
+  // ============ РЕАЛЬНЫЙ СЧЁТЧИК ОНЛАЙНА ============
+  if (window.FB_OK) {
+    // Проверяем все комнаты и удаляем просроченные
+    const roomsRef = firebase.database().ref('rooms');
+    roomsRef.once('value').then((snap) => {
+      const now = Date.now();
+      snap.forEach((child) => {
+        const room = child.val();
+        if (room && room.expiresAt && now > room.expiresAt) {
+          // Если время истекло — удаляем комнату
+          child.ref.remove();
+        }
+      });
+    }).catch(err => console.error('Ошибка очистки комнат:', err));
+
+    // Код счётчика онлайна
+    const presenceRef = firebase.database().ref('/presence/' + myPid);
+    const connectedRef = firebase.database().ref('.info/connected');
+
+    connectedRef.on('value', (snap) => {
+      if (snap.val() === true) {
+        presenceRef.onDisconnect().remove();
+        presenceRef.set(true);
       }
     });
-  }).catch(err => console.error('Ошибка очистки комнат:', err));
-  
-  // ... (сюда вставь уже существующий код счётчика онлайна)
-  const presenceRef = firebase.database().ref('/presence/' + myPid);
-  const connectedRef = firebase.database().ref('.info/connected');
 
-  // Когда пользователь заходит на сайт, записываем его в базу
-  connectedRef.on('value', (snap) => {
-    if (snap.val() === true) {
-      // Если он закрыл вкладку, запись удалится сама
-      presenceRef.onDisconnect().remove();
-      presenceRef.set(true);
-    }
-  });
-
-  // Следим за количеством людей в базе и обновляем счётчик
-  firebase.database().ref('/presence').on('value', (snap) => {
-    const count = snap.numChildren();
-    const el = document.getElementById('onlineCount');
-    if (el) el.textContent = count;
-  });
-}
+    firebase.database().ref('/presence').on('value', (snap) => {
+      const count = snap.numChildren();
+      const el = document.getElementById('onlineCount');
+      if (el) el.textContent = count;
+    });
+  }
 });
 })();
