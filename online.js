@@ -128,20 +128,42 @@ function renderLobby(mc) {
   mc.innerHTML = '<div class="online-screen"><h2>🌐 Комната ' + roomCode + '</h2>' +
     '<div class="invite-box"><p>Отправьте друзьям ссылку или код:</p><div class="invite-line"><span class="invite-link">' + esc(link) + '</span>' +
     '<button class="action-btn" id="olCopyLink">📋 Ссылка</button><button class="action-btn" id="olCopyCode">🔑 Код ' + roomCode + '</button></div></div>' +
-    '<div class="lobby-players"><h3>Выжившие (' + list.length + '/15):</h3>' +
+    '<div class="timer-box" id="room-timer-box"><strong>Комната истекает через:</strong> <span id="room-timer">05:00</span></div>' +
+'<div class="lobby-players"><h3>Выжившие (' + list.length + '/15):</h3>' +
     list.map(p => '<div class="lobby-player">' + (p.index + 1) + '. ' + esc(p.name) + (p.pid === myPid ? ' (вы)' : '') + (p.pid === roomData.hostId ? ' 👑' : '') + '</div>').join('') + '</div>' +
     (isHost()
       ? '<div class="setting-card"><h3>Предыстория</h3><select id="olBackstory">' + backstoryOptions(roomData.backstoryIndex || 0) + '</select></div>' +
-        '<div class="game-actions"><button class="action-btn" id="olStart"' + (list.length < 2 ? ' disabled' : '') + '>▶ Начать игру (' + list.length + ', мин. 2)</button></div>' +
+        '<div class="game-actions"><button class="action-btn" id="olStart"' + (list.length < 2 ? ' disabled' : '') + '>▶ Начать игру (' + list.length + ')</button></div>' +
         (list.length < 2 ? '<p class="online-hint">Нужно минимум 2 игрока.</p>' : '')
       : '<p class="online-hint">Ждём, пока хост начнёт игру…</p>') +
     '<div class="game-actions"><button class="action-btn" id="olLeave">🚪 Выйти</button></div></div>';
   $on('olCopyLink').addEventListener('click', () => copyText(link, 'Ссылка скопирована'));
   $on('olCopyCode').addEventListener('click', () => copyText(roomCode, 'Код скопирован'));
   $on('olLeave').addEventListener('click', () => leaveRoom());
-  if (isHost()) {
+    if (isHost()) {
     $on('olBackstory').addEventListener('change', (e) => roomRef.update({ backstoryIndex: parseInt(e.target.value, 10) }));
     const st = $on('olStart'); if (st) st.addEventListener('click', startOnlineGame);
+  }
+
+  // ===== ТАЙМЕР КОМНАТЫ (5 минут) =====
+  const timerEl = document.getElementById('room-timer');
+  if (timerEl && roomData.expiresAt) {
+    let timerInterval;
+    const updateTimer = () => {
+      const diff = roomData.expiresAt - Date.now();
+      if (diff <= 0) {
+        // Время вышло — удаляем комнату (всех автоматически выкинет)
+        roomRef.remove();
+        clearInterval(timerInterval);
+        timerEl.textContent = '00:00';
+      } else {
+        const min = Math.floor(diff / 60000);
+        const sec = Math.floor((diff % 60000) / 1000);
+        timerEl.textContent = String(min).padStart(2, '0') + ':' + String(sec).padStart(2, '0');
+      }
+    };
+    updateTimer();
+    timerInterval = setInterval(updateTimer, 1000);
   }
 }
 
@@ -241,7 +263,6 @@ document.addEventListener('DOMContentLoaded', () => {
   if (m) { if (window.FB_OK) window.joinRoomOnline(m[1]); else toast('Онлайн не настроен: проверь файл firebase-config.js'); }
 
 // ============ РЕАЛЬНЫЙ СЧЁТЧИК ОНЛАЙНА ============
-if (window.FB_OK) {
 if (window.FB_OK) {
   // Проверяем все комнаты и удаляем просроченные
   const roomsRef = firebase.database().ref('rooms');

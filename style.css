@@ -1636,3 +1636,20 @@ select:focus {
     font-size: 0.6rem;
   }
 }
+
+/* Таймер комнаты */
+.timer-box {
+  text-align: center;
+  margin: 10px 0;
+  padding: 12px;
+  border: 1px solid var(--amber-deep);
+  border-radius: 6px;
+  background: rgba(255, 182, 72, 0.05);
+  font-size: 1.1rem;
+  color: var(--amber);
+}
+#room-timer {
+  font-weight: 700;
+  font-size: 1.4rem;
+  text-shadow: 0 0 8px rgba(255, 182, 72, 0.6);
+}
