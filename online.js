@@ -145,22 +145,28 @@ function renderLobby(mc) {
     const st = $on('olStart'); if (st) st.addEventListener('click', startOnlineGame);
   }
 
-  // ===== ТАЙМЕР КОМНАТЫ (5 минут) =====
+    // ===== ТАЙМЕР КОМНАТЫ (5 минут) =====
   const timerEl = document.getElementById('room-timer');
   if (timerEl && roomData.expiresAt) {
     let timerInterval;
     const updateTimer = () => {
       const diff = roomData.expiresAt - Date.now();
       if (diff <= 0) {
-        // Время вышло — удаляем комнату (всех автоматически выкинет)
-        roomRef.remove();
+        // Время вышло — удаляем комнату и сразу выкидываем игрока
         clearInterval(timerInterval);
         timerEl.textContent = '00:00';
+        roomRef.remove(); // удаляем комнату из базы, чтобы ссылка стала недействительной
+        toast('Время вышло! Комната удалена.');
+        leaveRoom(false); // перезагружаем страницу, возвращая на главный экран
       } else {
         const min = Math.floor(diff / 60000);
         const sec = Math.floor((diff % 60000) / 1000);
         timerEl.textContent = String(min).padStart(2, '0') + ':' + String(sec).padStart(2, '0');
       }
+    };
+    updateTimer();
+    timerInterval = setInterval(updateTimer, 1000);
+  }
     };
     updateTimer();
     timerInterval = setInterval(updateTimer, 1000);
