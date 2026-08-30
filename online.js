@@ -60,7 +60,7 @@ window.createRoomOnline = function () {
   if (!window.FB_OK) { toast('Онлайн не настроен: проверь файл firebase-config.js'); return; }
   const name = (prompt('Ваше имя?') || '').trim(); if (!name) return;
   const code = genCode();
-  const up = { createdAt: Date.now(), hostId: myPid, status: 'lobby', backstoryIndex: 0 };
+  const up = { createdAt: Date.now(), expiresAt: Date.now() + 5 * 60 * 1000, hostId: myPid, status: 'lobby', backstoryIndex: 0 };
   up['players/' + myPid] = { name, index: 0, seen: 0 };
   firebase.database().ref('rooms/' + code).update(up).then(() => enterRoom(code)).catch(e => toast('Ошибка создания: ' + e.message));
 };
@@ -242,6 +242,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // ============ РЕАЛЬНЫЙ СЧЁТЧИК ОНЛАЙНА ============
 if (window.FB_OK) {
+if (window.FB_OK) {
+  // Проверяем все комнаты и удаляем просроченные
+  const roomsRef = firebase.database().ref('rooms');
+  roomsRef.once('value').then((snap) => {
+    const now = Date.now();
+    snap.forEach((child) => {
+      const room = child.val();
+      if (room && room.expiresAt && now > room.expiresAt) {
+        // Если время истекло — удаляем комнату
+        child.ref.remove();
+      }
+    });
+  }).catch(err => console.error('Ошибка очистки комнат:', err));
+  
+  // ... (сюда вставь уже существующий код счётчика онлайна)
   const presenceRef = firebase.database().ref('/presence/' + myPid);
   const connectedRef = firebase.database().ref('.info/connected');
 
