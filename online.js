@@ -167,7 +167,6 @@ function renderLobby(mc) {
       timerInterval = setInterval(updateTimer, 1000);
     }
   }
-}
 
 function renderMissions(mc) {
   const idx = myIndex(); const me = roomData.players[myPid];
