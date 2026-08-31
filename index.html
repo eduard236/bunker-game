@@ -657,6 +657,12 @@ document.addEventListener('DOMContentLoaded', function() {
           
           // Отправляем письмо подтверждения
           return user.sendEmailVerification().then(() => {
+  // СОЗДАЁМ ПРОФИЛЬ В БАЗЕ ДАННЫХ
+  firebase.database().ref('users/' + user.uid).set({
+    email: user.email,
+    nickname: 'Name not specified',
+    createdAt: Date.now()
+  });
             console.log('Письмо подтверждения отправлено на:', user.email);
             showSuccess('registerError', '✅ Аккаунт создан! Мы отправили письмо подтверждения на ' + email + '. Проверьте почту (и папку "Спам").');
             registerBtn.textContent = '🔑 Зарегистрироваться';
@@ -905,6 +911,25 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
+// ===== ФУНКЦИЯ ПОКАЗА/СКРЫТИЯ ПАРОЛЯ (ГЛАЗКИ) =====
+document.querySelectorAll('.password-toggle').forEach(function(toggle) {
+  toggle.addEventListener('click', function() {
+    var targetId = this.getAttribute('data-target');
+    var passwordInput = document.getElementById(targetId);
+    
+    if (passwordInput) {
+      if (passwordInput.getAttribute('type') === 'password') {
+        passwordInput.setAttribute('type', 'text');
+        this.textContent = '🙈';
+        this.classList.add('active');
+      } else {
+        passwordInput.setAttribute('type', 'password');
+        this.textContent = '👁';
+        this.classList.remove('active');
+      }
+    }
+  });
+});
 // ===== ФУНКЦИЯ ПОКАЗА/СКРЫТИЯ ПАРОЛЯ (ГЛАЗКИ) =====
 document.querySelectorAll('.password-toggle').forEach(function(toggle) {
   toggle.addEventListener('click', function() {
