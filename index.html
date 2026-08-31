@@ -227,6 +227,167 @@
 <script src="firebase-database-compat.js" defer></script>
 <script src="firebase-auth-compat.js" defer></script>
 <script src="firebase-config.js" defer></script>
+<script>
+// ===== МОДАЛЬНОЕ ОКНО АВТОРИЗАЦИИ =====
+document.addEventListener('DOMContentLoaded', function() {
+  const authModal = document.getElementById('authModal');
+  const authBtn = document.getElementById('authBtn');
+  const closeBtn = authModal ? authModal.querySelector('.close') : null;
+  
+  // Вкладки
+  const loginTab = document.querySelector('[data-tab="login"]');
+  const registerTab = document.querySelector('[data-tab="register"]');
+  const loginForm = document.getElementById('loginForm');
+  const registerForm = document.getElementById('registerForm');
+  const forgotForm = document.getElementById('forgotForm');
+  
+  // Кнопки форм
+  const loginBtn = document.getElementById('loginBtn');
+  const registerBtn = document.getElementById('registerBtn');
+  const forgotBtn = document.getElementById('forgotBtn');
+  const backToLoginBtn = document.getElementById('backToLoginBtn');
+  const forgotPasswordLink = document.getElementById('forgotPasswordLink');
+  
+  // Открытие окна
+  if (authBtn) {
+    authBtn.addEventListener('click', function() {
+      if (authModal) authModal.style.display = 'block';
+    });
+  }
+  
+  // Закрытие окна
+  if (closeBtn) {
+    closeBtn.addEventListener('click', function() {
+      authModal.style.display = 'none';
+    });
+  }
+  
+  // Закрытие по клику вне окна
+  if (authModal) {
+    window.addEventListener('click', function(e) {
+      if (e.target === authModal) {
+        authModal.style.display = 'none';
+      }
+    });
+  }
+  
+  // Переключение вкладок
+  if (loginTab) {
+    loginTab.addEventListener('click', function() {
+      loginTab.classList.add('active');
+      registerTab.classList.remove('active');
+      loginForm.style.display = 'block';
+      registerForm.style.display = 'none';
+      forgotForm.style.display = 'none';
+    });
+  }
+  
+  if (registerTab) {
+    registerTab.addEventListener('click', function() {
+      registerTab.classList.add('active');
+      loginTab.classList.remove('active');
+      loginForm.style.display = 'none';
+      registerForm.style.display = 'block';
+      forgotForm.style.display = 'none';
+    });
+  }
+  
+  // Восстановление пароля
+  if (forgotPasswordLink) {
+    forgotPasswordLink.addEventListener('click', function(e) {
+      e.preventDefault();
+      loginForm.style.display = 'none';
+      registerForm.style.display = 'none';
+      forgotForm.style.display = 'block';
+    });
+  }
+  
+  if (backToLoginBtn) {
+    backToLoginBtn.addEventListener('click', function() {
+      forgotForm.style.display = 'none';
+      loginForm.style.display = 'block';
+    });
+  }
+  
+  // Обработка форм (пока заглушки)
+  if (loginBtn) {
+    loginBtn.addEventListener('click', function() {
+      const email = document.getElementById('loginEmail').value;
+      const password = document.getElementById('loginPassword').value;
+      
+      if (!email || !password) {
+        showError('loginError', 'Введите email и пароль');
+        return;
+      }
+      
+      // Пока просто выводим в консоль
+      console.log('Login:', email, password);
+      alert('Функция входа будет подключена к Firebase на следующем этапе!');
+    });
+  }
+  
+  if (registerBtn) {
+    registerBtn.addEventListener('click', function() {
+      const email = document.getElementById('registerEmail').value;
+      const password = document.getElementById('registerPassword').value;
+      const confirm = document.getElementById('registerPasswordConfirm').value;
+      
+      if (!email || !password) {
+        showError('registerError', 'Заполните все поля');
+        return;
+      }
+      
+      if (password !== confirm) {
+        showError('registerError', 'Пароли не совпадают');
+        return;
+      }
+      
+      if (password.length < 6) {
+        showError('registerError', 'Пароль должен быть не менее 6 символов');
+        return;
+      }
+      
+      // Пока просто выводим в консоль
+      console.log('Register:', email, password);
+      alert('Функция регистрации будет подключена к Firebase на следующем этапе!');
+    });
+  }
+  
+  if (forgotBtn) {
+    forgotBtn.addEventListener('click', function() {
+      const email = document.getElementById('forgotEmail').value;
+      
+      if (!email) {
+        showError('forgotError', 'Введите email');
+        return;
+      }
+      
+      // Пока просто выводим в консоль
+      console.log('Password reset:', email);
+      showSuccess('forgotSuccess', 'Ссылка для восстановления пароля отправлена на ' + email);
+    });
+  }
+  
+  // Вспомогательные функции
+  function showError(elementId, message) {
+    const errorEl = document.getElementById(elementId);
+    if (errorEl) {
+      errorEl.textContent = message;
+      errorEl.classList.add('show');
+      setTimeout(() => errorEl.classList.remove('show'), 5000);
+    }
+  }
+  
+  function showSuccess(elementId, message) {
+    const successEl = document.getElementById(elementId);
+    if (successEl) {
+      successEl.textContent = message;
+      successEl.classList.add('show');
+      setTimeout(() => successEl.classList.remove('show'), 5000);
+    }
+  }
+});
+</script>
 <script src="script.js" defer></script>
 <script src="online.js" defer></script>
 </body>
