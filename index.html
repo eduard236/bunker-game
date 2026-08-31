@@ -18,6 +18,11 @@
   <span>чел.</span>
 </div>
 
+<!-- КНОПКИ АВТОРИЗАЦИИ -->
+<div id="authButtons" class="auth-buttons">
+  <button class="auth-btn-small" id="authBtn">🔑 Войти</button>
+</div>
+
 <div class="atmo" aria-hidden="true">
   <div class="atmo-noise"></div>
   <div class="atmo-scan"></div>
@@ -152,6 +157,68 @@
       <div class="support-thanks">
         <p>💖 Спасибо за вашу поддержку! Каждый рубль помогает развивать проект.</p>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- АВТОРИЗАЦИЯ -->
+<div id="authModal" class="modal">
+  <div class="modal-content auth-modal">
+    <span class="close">&times;</span>
+    <h2>🔐 ВХОД В БУНКЕР</h2>
+    
+    <!-- Переключатель вкладок -->
+    <div class="auth-tabs">
+      <button class="auth-tab active" data-tab="login">Вход</button>
+      <button class="auth-tab" data-tab="register">Регистрация</button>
+    </div>
+    
+    <!-- Форма входа -->
+    <div id="loginForm" class="auth-form">
+      <div class="form-group">
+        <label for="loginEmail">📧 Email</label>
+        <input type="email" id="loginEmail" placeholder="your@email.com" autocomplete="email">
+      </div>
+      <div class="form-group">
+        <label for="loginPassword"> Пароль</label>
+        <input type="password" id="loginPassword" placeholder="Введите пароль" autocomplete="current-password">
+      </div>
+      <button class="action-btn auth-btn" id="loginBtn"> Войти</button>
+      <div class="auth-links">
+        <a href="#" id="forgotPasswordLink">Забыли пароль?</a>
+      </div>
+      <div id="loginError" class="auth-error"></div>
+    </div>
+    
+    <!-- Форма регистрации -->
+    <div id="registerForm" class="auth-form" style="display: none;">
+      <div class="form-group">
+        <label for="registerEmail">📧 Email</label>
+        <input type="email" id="registerEmail" placeholder="your@email.com" autocomplete="email">
+      </div>
+      <div class="form-group">
+        <label for="registerPassword">🔑 Пароль</label>
+        <input type="password" id="registerPassword" placeholder="Минимум 6 символов" autocomplete="new-password">
+      </div>
+      <div class="form-group">
+        <label for="registerPasswordConfirm"> Повторите пароль</label>
+        <input type="password" id="registerPasswordConfirm" placeholder="Повторите пароль" autocomplete="new-password">
+      </div>
+      <button class="action-btn auth-btn" id="registerBtn"> Зарегистрироваться</button>
+      <div id="registerError" class="auth-error"></div>
+    </div>
+    
+    <!-- Форма восстановления пароля -->
+    <div id="forgotForm" class="auth-form" style="display: none;">
+      <p class="forgot-info">Введите email, указанный при регистрации. Мы отправим ссылку для восстановления пароля.</p>
+      <div class="form-group">
+        <label for="forgotEmail"> Email</label>
+        <input type="email" id="forgotEmail" placeholder="your@email.com" autocomplete="email">
+      </div>
+      <button class="action-btn auth-btn" id="forgotBtn">📨 Отправить ссылку</button>
+      <button class="action-btn auth-btn-back" id="backToLoginBtn">← Вернуться ко входу</button>
+      <div id="forgotError" class="auth-error"></div>
+      <div id="forgotSuccess" class="auth-success"></div>
     </div>
   </div>
 </div>
