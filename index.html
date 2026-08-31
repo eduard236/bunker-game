@@ -1,568 +1,523 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Бункер - Постапокалипсис</title>
-    <link rel="icon" type="image/svg+xml" href="favicon.svg">
-    <link href="https://fonts.googleapis.com/css2?family=Russo+One&family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-    <script src="firebase-app-compat.js" defer></script>
-    <script src="firebase-database-compat.js" defer></script>
-    <script src="firebase-auth-compat.js" defer></script>
-    <script src="firebase-config.js" defer></script>
-    <script src="script.js" defer></script>
-    <script src="online.js" defer></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0a0c0b">
+<title>Бункер - Постапокалипсис</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg?v=2">
+<link rel="stylesheet" href="style.css?v=3">
 </head>
 <body>
-    <div class="atmo">
-        <div class="atmo-noise"></div>
-        <div class="atmo-scan"></div>
-        <div class="atmo-vignette"></div>
-        <div class="radiation-wave w1"></div>
-        <div class="radiation-wave w2"></div>
-        <div class="radiation-wave w3"></div>
-    </div>
 
-    <!-- КНОПКИ АВТОРИЗАЦИИ (ВЕРХНИЙ ЛЕВЫЙ УГОЛ) -->
-    <div class="auth-buttons">
-        <button id="authBtn" class="auth-btn-small">🔑 Войти</button>
-    </div>
-
-    <!-- СЧЁТЧИК ОНЛАЙНА (ЛЕВЫЙ НИЖНИЙ УГОЛ) -->
-    <div id="bunker-online" class="bunker-online">
-        <span class="online-dot"></span>
-        <span>Сейчас в бункере: <b id="onlineCount">0</b> чел.</span>
-    </div>
-
-    <div class="container">
-        <div class="topbar">
-  <span>ОБЪЕКТ «ЗАРЯ-7» · ГОРИЗОНТ −12 · ГЕРМЕТИЗАЦИЯ: <b class="ok">НОРМА</b></span>
-  <div class="lamps">
-    <span class="led led-g"></span>
-    <span class="led led-a"></span>
-    <span class="led led-r"></span>
-  </div>
-  <span>ФОН: <b class="ok">0.12 мкЗв/ч</b> · СВЯЗЬ: <b class="warn">НЕТ</b> ☢</span>
+<!-- СЧЁТЧИК ОНЛАЙНА -->
+<div id="bunker-online" class="bunker-online">
+  <span class="online-dot"></span>
+  <span>Сейчас в бункере:</span>
+  <b id="onlineCount">0</b>
+  <span>чел.</span>
 </div>
 
-        <header class="main-header">
-            <div class="radiation-symbol"></div>
-            <h1>БУНКЕР - ТАЙНЫЕ МИССИИ</h1>
-            <p class="subtitle">Выживание после конца света</p>
-            <div class="tape"></div>
-        </header>
+<!-- КНОПКИ АВТОРИЗАЦИИ -->
+<div id="authButtons" class="auth-buttons">
+  <button class="auth-btn-small" id="authBtn">🔑 Войти</button>
+</div>
 
-        <main class="main-content">
-            <div class="panel-rivets">
-                <div class="game-setup">
-                    <h2 class="setup-title">▮ ОНЛАЙН-КОМНАТА</h2>
-                    <button id="createRoomBtn" class="rules-btn">🌐 СОЗДАТЬ КОМНАТУ (ОНЛАЙН)</button>
-                    <button id="joinRoomBtn" class="rules-btn">🔗 ВОЙТИ ПО КОДУ</button>
-                    <button id="rulesBtn" class="rules-btn">📖 ПРАВИЛА ИГРЫ</button>
-                    <button id="supportBtn" class="rules-btn">💝 ПОДДЕРЖАТЬ ПРОЕКТ</button>
-                </div>
+<div class="atmo" aria-hidden="true">
+  <div class="atmo-noise"></div>
+  <div class="atmo-scan"></div>
+  <div class="atmo-vignette"></div>
+  <div class="radiation-wave w1"></div>
+  <div class="radiation-wave w2"></div>
+  <div class="radiation-wave w3"></div>
+</div>
 
-                <div class="features">
-                    <div class="feature">
-                        <h4>🎲 Уникальные роли</h4>
-                        <p>30 профессий, 28 состояний здоровья, 29 предметов багажа — комбинации почти не повторяются.</p>
-                    </div>
-                    <div class="feature">
-                        <h4>📖 16 предысторий</h4>
-                        <p>От ядерной зимы до Великого молчания — каждый раз новый конец света.</p>
-                    </div>
-                    <div class="feature">
-                        <h4>🎯 Секретные миссии</h4>
-                        <p>Личные цели всегда указывают на реальных игроков в комнате. В конце — автопроверка итогов.</p>
-                    </div>
-                </div>
-            </div>
-        </main>
+<div class="container">
+
+  <div class="topbar" aria-hidden="true">
+    <span>ОБЪЕКТ «ЗАРЯ-7» · ГОРИЗОНТ −12 · ГЕРМЕТИЗАЦИЯ: <b class="ok">НОРМА</b></span>
+    <span class="lamps"><i class="led led-g"></i><i class="led led-a"></i><i class="led led-r"></i></span>
+    <span>ФОН: <b class="ok">0.12 мкЗв/ч</b> · СВЯЗЬ: <b class="warn">НЕТ</b></span>
+  </div>
+
+  <header class="main-header">
+    <div class="tape" aria-hidden="true"></div>
+    <div class="radiation-symbol">☢</div>
+    <h1>БУНКЕР - ТАЙНЫЕ МИССИИ</h1>
+    <p class="subtitle">Выживание после конца света</p>
+    <div class="tape" aria-hidden="true"></div>
+  </header>
+
+  <div class="main-content">
+
+    <section class="game-setup panel-rivets">
+      <h2 class="setup-title">▮ ОНЛАЙН-КОМНАТА</h2>
+
+      <button class="rules-btn" id="createRoomBtn"> СОЗДАТЬ КОМНАТУ (ОНЛАЙН)</button>
+      <button class="rules-btn" id="joinRoomBtn">🔗 ВОЙТИ ПО КОДУ</button>
+      <button class="rules-btn" id="rulesBtn"> ПРАВИЛА ИГРЫ</button>
+
+      <div class="support-section">
+        <button class="support-btn" id="supportBtn">💝 ПОДДЕРЖАТЬ ПРОЕКТ</button>
+      </div>
+    </section>
+
+    <section class="features">
+      <div class="feature">
+        <h4> Уникальные роли</h4>
+        <p>30 профессий, 28 состояний здоровья, 29 предметов багажа — комбинации почти не повторяются.</p>
+      </div>
+      <div class="feature">
+        <h4>📖 16 предысторий</h4>
+        <p>От ядерной зимы до Великого молчания — каждый раз новый конец света.</p>
+      </div>
+      <div class="feature">
+        <h4> Секретные миссии</h4>
+        <p>Личные цели всегда указывают на реальных игроков в комнате. В конце — автопроверка итогов.</p>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<!-- ПРАВИЛА -->
+<div id="rulesModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <h2> ПРАВИЛА ИГРЫ "БУНКЕР"</h2>
+    <div class="rules-section">
+      <h3>🎯 Цель игры</h3>
+      <p>Вы - выжившие после апокалипсиса в одном бункере. Ресурсов на всех не хватит. Ваша цель - убедить других, что именно ВЫ должны остаться в бункере!</p>
     </div>
+    <div class="rules-section">
+      <h3>👥 Подготовка</h3>
+      <ul>
+        <li>🌐 Создайте комнату и отправьте друзьям ссылку или код (2–15 игроков)</li>
+        <li>📖 Хост выбирает предысторию апокалипсиса</li>
+        <li>🎭 Каждый игрок получает случайную роль с уникальными характеристиками</li>
+      </ul>
+    </div>
+    <div class="rules-section">
+      <h3> Характеристики игроков</h3>
+      <ul>
+        <li><strong>Профессия</strong> - чем вы полезны для выживания</li>
+        <li><strong>Здоровье</strong> - ваше физическое состояние</li>
+        <li><strong>Фобия</strong> - чего вы боитесь</li>
+        <li><strong>Хобби</strong> - ваши дополнительные навыки</li>
+        <li><strong>Качество</strong> - черты характера</li>
+        <li><strong>Факт</strong> - уникальная информация о вас</li>
+        <li><strong>Багаж</strong> - что взяли с собой в бункер</li>
+      </ul>
+    </div>
+    <div class="rules-section">
+      <h3>🔄 Ход игры</h3>
+      <ol>
+        <li>📚 Прочитайте предысторию апокалипсиса</li>
+        <li>👀 Свою карточку видите только вы. Остальные видят «???», пока вы не нажмёте «👁 открыть всем» по каждой характеристике отдельно</li>
+        <li>💬 Начинается обсуждение - доказывайте свою ценность</li>
+        <li>🤝 Объединяйтесь, торгуйтесь, шантажируйте других игроков</li>
+        <li>🗳️ Каждый раунд хост голосованием изгоняет ОДНОГО игрока — отмечает кнопкой « Изгнан» на его карточке</li>
+        <li>⏭️ Игра заканчивается, когда в бункере остаётся половина от начального числа (округлённая вверх, минимум 1): 2→1 · 4→2 · 6→3 · 10→5 · 15→8</li>
+        <li>🏁 Затем хост жмёт «Итоги» — сайт раскроет миссии и автоматически проверит их выполнение</li>
+      </ol>
+    </div>
+    <div class="rules-section">
+      <h3>🎯 Секретные миссии</h3>
+      <p>Некоторые игроки получают секретные миссии. Миссия всегда указывает на характеристику, которая ЕСТЬ у одного из игроков в комнате. Кнопка «Моя миссия» открывается после подтверждения «я этот игрок» — чтобы никто не подсмотрел.</p>
+      <ul>
+        <li><strong>СПАСАТЕЛЬ</strong> - помочь выжить конкретному игроку</li>
+        <li><strong>ПРЕДАТЕЛЬ</strong> - добиться изгнания конкретного игрока</li>
+        <li><strong>СПЕЦИАЛИСТ</strong> - сохранить игрока с нужной профессией</li>
+        <li><strong>ХРАНИТЕЛЬ</strong> - защитить игрока с ценным багажом</li>
+        <li><strong>ЦЕЛИТЕЛЬ</strong> - помочь выжить игроку с проблемным здоровьем</li>
+      </ul>
+      <p>📊 Количество миссий: 2–3 игрока → 1 · 4–6 → 2 · 7–9 → 3 · 10–12 → 4 · 13–15 → 5</p>
+    </div>
+    <div class="rules-tip">
+      <p>⭐ Главное - не просто выжить, а убедить других в своей необходимости для будущего человечества!</p>
+    </div>
+  </div>
+</div>
 
-    <!-- МОДАЛЬНОЕ ОКНО ПРАВИЛ -->
-    <div id="rulesModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>📖 ПРАВИЛА ИГРЫ "БУНКЕР"</h2>
-            
-            <div class="rules-section">
-                <h3>🎯 Цель игры</h3>
-                <p>Вы - выжившие после апокалипсиса в одном бункере. Ресурсов на всех не хватит. Ваша цель - убедить других, что именно ВЫ должны остаться в бункере!</p>
-            </div>
-
-            <div class="rules-section">
-                <h3>👥 Подготовка</h3>
-                <ul>
-                    <li>🌐 Создайте комнату и отправьте друзьям ссылку или код (2–15 игроков)</li>
-                    <li>📖 Хост выбирает предысторию апокалипсиса</li>
-                    <li> Каждый игрок получает случайную роль с уникальными характеристиками</li>
-                </ul>
-            </div>
-
-            <div class="rules-section">
-                <h3>🎭 Характеристики игроков</h3>
-                <ul>
-                    <li><strong>Профессия</strong> - чем вы полезны для выживания</li>
-                    <li><strong>Здоровье</strong> - ваше физическое состояние</li>
-                    <li><strong>Фобия</strong> - чего вы боитесь</li>
-                    <li><strong>Хобби</strong> - ваши дополнительные навыки</li>
-                    <li><strong>Качество</strong> - черты характера</li>
-                    <li><strong>Факт</strong> - уникальная информация о вас</li>
-                    <li><strong>Багаж</strong> - что взяли с собой в бункер</li>
-                </ul>
-            </div>
-
-            <div class="rules-section">
-                <h3>🔄 Ход игры</h3>
-                <ol>
-                    <li>📚 Прочитайте предысторию апокалипсиса</li>
-                    <li> Свою карточку видите только вы. Остальные видят «???», пока вы не нажмёте «👁 открыть всем» по каждой характеристике отдельно</li>
-                    <li>💬 Начинается обсуждение - доказывайте свою ценность</li>
-                    <li> Объединяйтесь, торгуйтесь, шантажируйте других игроков</li>
-                    <li>🗳️ Каждый раунд хост голосованием изгоняет ОДНОГО игрока — отмечает кнопкой « Изгнан» на его карточке</li>
-                    <li>⏭️ Игра заканчивается, когда в бункере остаётся половина от начального числа (округлённая вверх, минимум 1): 2→1 · 4→2 · 6→3 · 10→5 · 15→8</li>
-                    <li>🏁 Затем хост жмёт «Итоги» — сайт раскроет миссии и автоматически проверит их выполнение</li>
-                </ol>
-            </div>
-
-            <div class="rules-section">
-                <h3>🎯 Секретные миссии</h3>
-                <p>Некоторые игроки получают секретные миссии. Миссия всегда указывает на характеристику, которая ЕСТЬ у одного из игроков в комнате. Кнопка «Моя миссия» открывается после подтверждения «я этот игрок» — чтобы никто не подсмотрел.</p>
-                <ul>
-                    <li><strong>СПАСАТЕЛЬ</strong> - помочь выжить конкретному игроку</li>
-                    <li><strong>ПРЕДАТЕЛЬ</strong> - добиться изгнания конкретного игрока</li>
-                    <li><strong>СПЕЦИАЛИСТ</strong> - сохранить игрока с нужной профессией</li>
-                    <li><strong>ХРАНИТЕЛЬ</strong> - защитить игрока с ценным багажом</li>
-                    <li><strong>ЦЕЛИТЕЛЬ</strong> - помочь выжить игроку с проблемным здоровьем</li>
-                </ul>
-                <p><strong>📊 Количество миссий:</strong> 2–3 игрока → 1 · 4–6 → 2 · 7–9 → 3 · 10–12 → 4 · 13–15 → 5</p>
-            </div>
-
-            <div class="rules-tip">
-                <p>⭐ Главное - не просто выжить, а убедить других в своей необходимости для будущего человечества!</p>
-            </div>
+<!-- ПОДДЕРЖКА -->
+<div id="supportModal" class="modal">
+  <div class="modal-content support-modal">
+    <span class="close">&times;</span>
+    <h2>💝 Поддержать проект</h2>
+    <div class="support-content">
+      <p>Если вам нравится игра, вы можете поддержать её развитие!</p>
+      <div class="card-info">
+        <p>📱 Номер карты:</p>
+        <div class="card-number">
+          <span class="card-digits">2202 2081 5080 9037</span>
+          <button class="copy-btn" onclick="copyCardNumber()">📋 Копировать</button>
         </div>
+        <p class="bank-info">Сбербанк</p>
+      </div>
+      <div class="support-thanks">
+        <p>💖 Спасибо за вашу поддержку! Каждый рубль помогает развивать проект.</p>
+      </div>
     </div>
+  </div>
+</div>
 
-    <!-- МОДАЛЬНОЕ ОКНО ПОДДЕРЖКИ -->
-    <div id="supportModal" class="modal support-modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>💝 Поддержать проект</h2>
-            <div class="support-content">
-                <p>Если вам нравится игра, вы можете поддержать её развитие!</p>
-                
-                <div class="card-info">
-                    <p>📱 Номер карты:</p>
-                    <div class="card-number">
-                        <span class="card-digits">2202 2081 5080 9037</span>
-                        <button class="copy-btn" onclick="copyCardNumber()">📋 Копировать</button>
-                    </div>
-                    <p class="bank-info">Сбербанк</p>
-                </div>
-
-                <div class="support-thanks">
-                    <p>💖 Спасибо за вашу поддержку! Каждый рубль помогает развивать проект.</p>
-                </div>
-            </div>
+<!-- АВТОРИЗАЦИЯ -->
+<div id="authModal" class="modal">
+  <div class="modal-content auth-modal-content">
+    <span class="close">&times;</span>
+    <h2> ВХОД В БУНКЕР</h2>
+    
+    <div class="auth-tabs">
+      <button class="auth-tab active" data-tab="login">Вход</button>
+      <button class="auth-tab" data-tab="register">Регистрация</button>
+    </div>
+    
+    <!-- Форма входа -->
+    <div id="loginForm" class="auth-form">
+      <div class="form-group">
+        <label for="loginEmail">📧 Email</label>
+        <input type="email" id="loginEmail" placeholder="your@email.com" autocomplete="email">
+      </div>
+      <div class="form-group">
+        <label for="loginPassword">🔑 Пароль</label>
+        <div class="password-input-wrapper">
+          <input type="password" id="loginPassword" placeholder="Введите пароль" autocomplete="current-password">
+          <button type="button" class="password-toggle" data-target="loginPassword">👁</button>
         </div>
+      </div>
+      <button class="action-btn auth-btn" id="loginBtn">🔑 Войти</button>
+      <div class="auth-links">
+        <a href="#" id="forgotPasswordLink">Забыли пароль?</a>
+      </div>
+      <div id="loginError" class="auth-error"></div>
     </div>
-
-    <!-- МОДАЛЬНОЕ ОКНО АВТОРИЗАЦИИ -->
-    <div id="authModal" class="modal auth-modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>🔐 ВХОД В БУНКЕР</h2>
-            
-            <div class="auth-tabs">
-                <button class="auth-tab active" data-tab="login">Вход</button>
-                <button class="auth-tab" data-tab="register">Регистрация</button>
-            </div>
-
-            <!-- Форма входа -->
-            <form id="loginForm" class="auth-form">
-                <div class="form-group">
-                    <label for="loginEmail">📧 Email</label>
-                    <input type="email" id="loginEmail" placeholder="your@email.com" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="loginPassword">🔑 Пароль</label>
-                    <div class="password-input-wrapper">
-                        <input type="password" id="loginPassword" placeholder="Введите пароль" required autocomplete="current-password">
-                        <button type="button" class="password-toggle" data-target="loginPassword">👁</button>
-                    </div>
-                </div>
-                
-                <button type="button" id="loginBtn" class="action-btn auth-btn">🔑 Войти</button>
-                
-                <div class="auth-links">
-                    <a href="#" id="forgotPasswordLink">Забыли пароль?</a>
-                </div>
-                
-                <div id="loginError" class="auth-error"></div>
-            </form>
-
-            <!-- Форма регистрации -->
-            <form id="registerForm" class="auth-form" style="display: none;">
-                <div class="form-group">
-                    <label for="registerEmail">📧 Email</label>
-                    <input type="email" id="registerEmail" placeholder="your@email.com" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="registerPassword"> Пароль</label>
-                    <div class="password-input-wrapper">
-                        <input type="password" id="registerPassword" placeholder="Минимум 6 символов" required autocomplete="new-password">
-                        <button type="button" class="password-toggle" data-target="registerPassword"></button>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="registerPasswordConfirm">🔑 Повторите пароль</label>
-                    <div class="password-input-wrapper">
-                        <input type="password" id="registerPasswordConfirm" placeholder="Повторите пароль" required autocomplete="new-password">
-                        <button type="button" class="password-toggle" data-target="registerPasswordConfirm"></button>
-                    </div>
-                </div>
-                
-                <button type="button" id="registerBtn" class="action-btn auth-btn">🔑 Зарегистрироваться</button>
-                
-                <div id="registerError" class="auth-error"></div>
-                <div id="registerSuccess" class="auth-success"></div>
-            </form>
-
-            <!-- Форма восстановления пароля -->
-            <form id="forgotForm" class="auth-form" style="display: none;">
-                <p class="forgot-info">Введите email, указанный при регистрации. Мы отправим ссылку для восстановления пароля.</p>
-                
-                <div class="form-group">
-                    <label for="forgotEmail">📧 Email</label>
-                    <input type="email" id="forgotEmail" placeholder="your@email.com" required>
-                </div>
-                
-                <button type="button" id="forgotBtn" class="action-btn auth-btn"> Отправить ссылку</button>
-                
-                <button type="button" id="backToLoginBtn" class="auth-btn-back">← Вернуться ко входу</button>
-                
-                <div id="forgotError" class="auth-error"></div>
-                <div id="forgotSuccess" class="auth-success"></div>
-            </form>
+    
+    <!-- Форма регистрации -->
+    <div id="registerForm" class="auth-form" style="display: none;">
+      <div class="form-group">
+        <label for="registerEmail">📧 Email</label>
+        <input type="email" id="registerEmail" placeholder="your@email.com" autocomplete="email">
+      </div>
+      <div class="form-group">
+        <label for="registerPassword"> Пароль</label>
+        <div class="password-input-wrapper">
+          <input type="password" id="registerPassword" placeholder="Минимум 6 символов" autocomplete="new-password">
+          <button type="button" class="password-toggle" data-target="registerPassword">👁</button>
         </div>
+      </div>
+      <div class="form-group">
+        <label for="registerPasswordConfirm">🔑 Повторите пароль</label>
+        <div class="password-input-wrapper">
+          <input type="password" id="registerPasswordConfirm" placeholder="Повторите пароль" autocomplete="new-password">
+          <button type="button" class="password-toggle" data-target="registerPasswordConfirm">👁</button>
+        </div>
+      </div>
+      <button class="action-btn auth-btn" id="registerBtn">🔑 Зарегистрироваться</button>
+      <div id="registerError" class="auth-error"></div>
+      <div id="registerSuccess" class="auth-success"></div>
     </div>
+    
+    <!-- Форма восстановления пароля -->
+    <div id="forgotForm" class="auth-form" style="display: none;">
+      <p class="forgot-info">Введите email, указанный при регистрации. Мы отправим ссылку для восстановления пароля.</p>
+      <div class="form-group">
+        <label for="forgotEmail"> Email</label>
+        <input type="email" id="forgotEmail" placeholder="your@email.com" autocomplete="email">
+      </div>
+      <button class="action-btn auth-btn" id="forgotBtn">📨 Отправить ссылку</button>
+      <button class="auth-btn-back" id="backToLoginBtn">← Вернуться ко входу</button>
+      <div id="forgotError" class="auth-error"></div>
+      <div id="forgotSuccess" class="auth-success"></div>
+    </div>
+  </div>
+</div>
 
-    <!-- JAVASCRIPT ДЛЯ МОДАЛЬНОГО ОКНА АВТОРИЗАЦИИ -->
-    <script>
-    // ===== МОДАЛЬНОЕ ОКНО АВТОРИЗАЦИИ + FIREBASE AUTH =====
-    document.addEventListener('DOMContentLoaded', function() {
-        const authModal = document.getElementById('authModal');
-        const authBtn = document.getElementById('authBtn');
-        const closeBtn = authModal ? authModal.querySelector('.close') : null;
-        
-        // Вкладки
-        const loginTab = document.querySelector('[data-tab="login"]');
-        const registerTab = document.querySelector('[data-tab="register"]');
-        const loginForm = document.getElementById('loginForm');
-        const registerForm = document.getElementById('registerForm');
-        const forgotForm = document.getElementById('forgotForm');
-        
-        // Кнопки форм
-        const loginBtn = document.getElementById('loginBtn');
-        const registerBtn = document.getElementById('registerBtn');
-        const forgotBtn = document.getElementById('forgotBtn');
-        const backToLoginBtn = document.getElementById('backToLoginBtn');
-        const forgotPasswordLink = document.getElementById('forgotPasswordLink');
-        
-        // ===== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ =====
-        function showError(elementId, message) {
-            const errorEl = document.getElementById(elementId);
-            if (errorEl) {
-                errorEl.textContent = message;
-                errorEl.classList.add('show');
-                setTimeout(() => errorEl.classList.remove('show'), 6000);
-            }
+<script src="firebase-app-compat.js" defer></script>
+<script src="firebase-database-compat.js" defer></script>
+<script src="firebase-auth-compat.js" defer></script>
+<script src="firebase-config.js" defer></script>
+<script src="script.js" defer></script>
+<script src="online.js" defer></script>
+
+<script>
+// ===== МОДАЛЬНОЕ ОКНО АВТОРИЗАЦИИ + FIREBASE AUTH =====
+document.addEventListener('DOMContentLoaded', function() {
+  const authModal = document.getElementById('authModal');
+  const authBtn = document.getElementById('authBtn');
+  const closeBtn = authModal ? authModal.querySelector('.close') : null;
+  
+  const loginTab = document.querySelector('[data-tab="login"]');
+  const registerTab = document.querySelector('[data-tab="register"]');
+  const loginForm = document.getElementById('loginForm');
+  const registerForm = document.getElementById('registerForm');
+  const forgotForm = document.getElementById('forgotForm');
+  
+  const loginBtn = document.getElementById('loginBtn');
+  const registerBtn = document.getElementById('registerBtn');
+  const forgotBtn = document.getElementById('forgotBtn');
+  const backToLoginBtn = document.getElementById('backToLoginBtn');
+  const forgotPasswordLink = document.getElementById('forgotPasswordLink');
+  
+  function showError(elementId, message) {
+    const errorEl = document.getElementById(elementId);
+    if (errorEl) {
+      errorEl.textContent = message;
+      errorEl.classList.add('show');
+      setTimeout(() => errorEl.classList.remove('show'), 6000);
+    }
+  }
+  
+  function showSuccess(elementId, message) {
+    const successEl = document.getElementById(elementId);
+    if (successEl) {
+      successEl.textContent = message;
+      successEl.classList.add('show');
+      setTimeout(() => successEl.classList.remove('show'), 6000);
+    }
+  }
+  
+  function clearAllMessages() {
+    ['loginError', 'registerError', 'forgotError', 'forgotSuccess', 'registerSuccess'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.textContent = '';
+        el.classList.remove('show');
+      }
+    });
+  }
+  
+  function translateFirebaseError(error) {
+    const code = error.code;
+    const messages = {
+      'auth/email-already-in-use': 'Этот email уже зарегистрирован. Попробуйте войти.',
+      'auth/invalid-email': 'Некорректный формат email.',
+      'auth/weak-password': 'Пароль слишком слабый. Минимум 6 символов.',
+      'auth/user-not-found': 'Пользователь с таким email не найден.',
+      'auth/wrong-password': 'Неверный пароль. Попробуйте ещё раз.',
+      'auth/too-many-requests': 'Слишком много попыток. Подождите немного.',
+      'auth/network-request-failed': 'Ошибка сети. Проверьте интернет.',
+      'auth/operation-not-allowed': 'Вход по email/паролю не включён.',
+      'auth/invalid-credential': 'Неверные данные для входа.'
+    };
+    return messages[code] || 'Ошибка: ' + error.message;
+  }
+  
+  if (authBtn) {
+    authBtn.addEventListener('click', function() {
+      clearAllMessages();
+      if (authModal) authModal.style.display = 'block';
+    });
+  }
+  
+  if (closeBtn) {
+    closeBtn.addEventListener('click', function() {
+      authModal.style.display = 'none';
+      clearAllMessages();
+    });
+  }
+  
+  if (authModal) {
+    window.addEventListener('click', function(e) {
+      if (e.target === authModal) {
+        authModal.style.display = 'none';
+        clearAllMessages();
+      }
+    });
+  }
+  
+  if (loginTab) {
+    loginTab.addEventListener('click', function() {
+      loginTab.classList.add('active');
+      registerTab.classList.remove('active');
+      loginForm.style.display = 'block';
+      registerForm.style.display = 'none';
+      forgotForm.style.display = 'none';
+      clearAllMessages();
+    });
+  }
+  
+  if (registerTab) {
+    registerTab.addEventListener('click', function() {
+      registerTab.classList.add('active');
+      loginTab.classList.remove('active');
+      loginForm.style.display = 'none';
+      registerForm.style.display = 'block';
+      forgotForm.style.display = 'none';
+      clearAllMessages();
+    });
+  }
+  
+  if (forgotPasswordLink) {
+    forgotPasswordLink.addEventListener('click', function(e) {
+      e.preventDefault();
+      loginForm.style.display = 'none';
+      registerForm.style.display = 'none';
+      forgotForm.style.display = 'block';
+      clearAllMessages();
+    });
+  }
+  
+  if (backToLoginBtn) {
+    backToLoginBtn.addEventListener('click', function() {
+      forgotForm.style.display = 'none';
+      loginForm.style.display = 'block';
+      clearAllMessages();
+    });
+  }
+  
+  // ===== ГЛАЗКИ ДЛЯ ПАРОЛЯ =====
+  document.querySelectorAll('.password-toggle').forEach(function(toggle) {
+    toggle.addEventListener('click', function() {
+      var targetId = this.getAttribute('data-target');
+      var passwordInput = document.getElementById(targetId);
+      
+      if (passwordInput) {
+        if (passwordInput.type === 'password') {
+          passwordInput.type = 'text';
+          this.textContent = '🙈';
+          this.classList.add('active');
+        } else {
+          passwordInput.type = 'password';
+          this.textContent = '👁';
+          this.classList.remove('active');
         }
-        
-        function showSuccess(elementId, message) {
-            const successEl = document.getElementById(elementId);
-            if (successEl) {
-                successEl.textContent = message;
-                successEl.classList.add('show');
-                setTimeout(() => successEl.classList.remove('show'), 6000);
-            }
-        }
-        
-        function clearAllMessages() {
-            ['loginError', 'registerError', 'forgotError', 'forgotSuccess'].forEach(id => {
-                const el = document.getElementById(id);
-                if (el) {
-                    el.textContent = '';
-                    el.classList.remove('show');
-                }
-            });
-        }
-        
-        // ===== ПЕРЕВОД ОШИБОК FIREBASE =====
-        function translateFirebaseError(error) {
-            const code = error.code;
-            const messages = {
-                'auth/email-already-in-use': 'Этот email уже зарегистрирован. Попробуйте войти.',
-                'auth/invalid-email': 'Некорректный формат email.',
-                'auth/weak-password': 'Пароль слишком слабый. Минимум 6 символов.',
-                'auth/user-not-found': 'Пользователь с таким email не найден.',
-                'auth/wrong-password': 'Неверный пароль. Попробуйте ещё раз.',
-                'auth/too-many-requests': 'Слишком много попыток. Подождите немного.',
-                'auth/network-request-failed': 'Ошибка сети. Проверьте интернет.',
-                'auth/operation-not-allowed': 'Вход по email/паролю не включён.',
-                'auth/invalid-credential': 'Неверные данные для входа.'
-            };
-            return messages[code] || 'Ошибка: ' + error.message;
-        }
-        
-        // ===== ОТКРЫТИЕ/ЗАКРЫТИЕ ОКНА =====
-        if (authBtn) {
-            authBtn.addEventListener('click', function() {
-                clearAllMessages();
-                if (authModal) authModal.style.display = 'block';
-            });
-        }
-        
-        if (closeBtn) {
-            closeBtn.addEventListener('click', function() {
-                authModal.style.display = 'none';
-                clearAllMessages();
-            });
-        }
-        
-        if (authModal) {
-            window.addEventListener('click', function(e) {
-                if (e.target === authModal) {
-                    authModal.style.display = 'none';
-                    clearAllMessages();
-                }
-            });
-        }
-        
-        // ===== ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК =====
-        if (loginTab) {
-            loginTab.addEventListener('click', function() {
-                loginTab.classList.add('active');
-                registerTab.classList.remove('active');
-                loginForm.style.display = 'block';
-                registerForm.style.display = 'none';
-                forgotForm.style.display = 'none';
-                clearAllMessages();
-            });
-        }
-        
-        if (registerTab) {
-            registerTab.addEventListener('click', function() {
-                registerTab.classList.add('active');
-                loginTab.classList.remove('active');
-                loginForm.style.display = 'none';
-                registerForm.style.display = 'block';
-                forgotForm.style.display = 'none';
-                clearAllMessages();
-            });
-        }
-        
-        // ===== ВОССТАНОВЛЕНИЕ ПАРОЛЯ =====
-        if (forgotPasswordLink) {
-            forgotPasswordLink.addEventListener('click', function(e) {
-                e.preventDefault();
-                loginForm.style.display = 'none';
-                registerForm.style.display = 'none';
-                forgotForm.style.display = 'block';
-                clearAllMessages();
-            });
-        }
-        
-        if (backToLoginBtn) {
-            backToLoginBtn.addEventListener('click', function() {
-                forgotForm.style.display = 'none';
-                loginForm.style.display = 'block';
-                clearAllMessages();
-            });
-        }
-        
-        // ===== ГЛАЗКИ ДЛЯ ПАРОЛЯ (ПОКАЗАТЬ/СКРЫТЬ) =====
-        document.querySelectorAll('.password-toggle').forEach(function(toggle) {
-            toggle.addEventListener('click', function() {
-                var targetId = this.getAttribute('data-target');
-                var passwordInput = document.getElementById(targetId);
-                
-                if (passwordInput) {
-                    if (passwordInput.type === 'password') {
-                        passwordInput.type = 'text';
-                        this.textContent = '🙈';
-                        this.classList.add('active');
-                    } else {
-                        passwordInput.type = 'password';
-                        this.textContent = '👁';
-                        this.classList.remove('active');
-                    }
-                }
-            });
-        });
-        
-        // ===== ВХОД В АККАУНТ =====
-        if (loginBtn) {
-            loginBtn.addEventListener('click', function() {
-                const email = document.getElementById('loginEmail').value.trim();
-                const password = document.getElementById('loginPassword').value;
-                
-                if (!email || !password) {
-                    showError('loginError', 'Введите email и пароль');
-                    return;
-                }
-                
-                loginBtn.textContent = '⏳ Вход...';
-                loginBtn.disabled = true;
-                
-                firebase.auth().signInWithEmailAndPassword(email, password)
-                    .then((userCredential) => {
-                        const user = userCredential.user;
-                        
-                        if (!user.emailVerified) {
-                            firebase.auth().signOut();
-                            showError('loginError', '⚠️ Email не подтверждён! Проверьте почту.');
-                            loginBtn.textContent = '🔑 Войти';
-                            loginBtn.disabled = false;
-                            return;
-                        }
-                        
-                        console.log('Вход выполнен:', user.email);
-                        authModal.style.display = 'none';
-                        clearAllMessages();
-                        alert('✅ Добро пожаловать, ' + user.email + '!');
-                        
-                        loginBtn.textContent = '🔑 Войти';
-                        loginBtn.disabled = false;
-                    })
-                    .catch((error) => {
-                        console.error('Ошибка входа:', error);
-                        showError('loginError', translateFirebaseError(error));
-                        loginBtn.textContent = '🔑 Войти';
-                        loginBtn.disabled = false;
-                    });
-            });
-        }
-        
-        // ===== РЕГИСТРАЦИЯ =====
-        if (registerBtn) {
-            registerBtn.addEventListener('click', function() {
-                const email = document.getElementById('registerEmail').value.trim();
-                const password = document.getElementById('registerPassword').value;
-                const confirm = document.getElementById('registerPasswordConfirm').value;
-                
-                if (!email || !password || !confirm) {
-                    showError('registerError', 'Заполните все поля');
-                    return;
-                }
-                
-                if (password !== confirm) {
-                    showError('registerError', 'Пароли не совпадают');
-                    return;
-                }
-                
-                if (password.length < 6) {
-                    showError('registerError', 'Пароль должен быть не менее 6 символов');
-                    return;
-                }
-                
-                registerBtn.textContent = ' Регистрация...';
-                registerBtn.disabled = true;
-                
-                firebase.auth().createUserWithEmailAndPassword(email, password)
-                    .then((userCredential) => {
-                        const user = userCredential.user;
-                        return user.sendEmailVerification().then(() => {
-                            console.log('Письмо отправлено на:', user.email);
-                            showSuccess('registerError', '✅ Аккаунт создан! Проверьте почту ' + email);
-                            registerBtn.textContent = '🔑 Зарегистрироваться';
-                            registerBtn.disabled = false;
-                            return firebase.auth().signOut();
-                        });
-                    })
-                    .then(() => {
-                        setTimeout(() => loginTab.click(), 3000);
-                    })
-                    .catch((error) => {
-                        console.error('Ошибка регистрации:', error);
-                        showError('registerError', translateFirebaseError(error));
-                        registerBtn.textContent = '🔑 Зарегистрироваться';
-                        registerBtn.disabled = false;
-                    });
-            });
-        }
-        
-        // ===== ВОССТАНОВЛЕНИЕ ПАРОЛЯ =====
-        if (forgotBtn) {
-            forgotBtn.addEventListener('click', function() {
-                const email = document.getElementById('forgotEmail').value.trim();
-                
-                if (!email) {
-                    showError('forgotError', 'Введите email');
-                    return;
-                }
-                
-                forgotBtn.textContent = '⏳ Отправка...';
-                forgotBtn.disabled = true;
-                
-                firebase.auth().sendPasswordResetEmail(email)
-                    .then(() => {
-                        console.log('Письмо отправлено на:', email);
-                        showSuccess('forgotSuccess', '✅ Ссылка отправлена на ' + email);
-                        forgotBtn.textContent = '📨 Отправить ссылку';
-                        forgotBtn.disabled = false;
-                    })
-                    .catch((error) => {
-                        console.error('Ошибка:', error);
-                        showError('forgotError', translateFirebaseError(error));
-                        forgotBtn.textContent = '📨 Отправить ссылку';
-                        forgotBtn.disabled = false;
-                    });
-            });
-        }
-        
-        // ===== СЛУШАТЕЛЬ СОСТОЯНИЯ ВХОДА =====
-        firebase.auth().onAuthStateChanged((user) => {
-            const authBtnEl = document.getElementById('authBtn');
-            if (user) {
-                console.log('✅ Пользователь вошёл:', user.email);
-                authBtnEl.textContent = '👤 Профиль';
-            } else {
-                console.log('🔑 Пользователь не авторизован');
-                authBtnEl.textContent = '🔑 Войти';
-            }
+      }
+    });
+  });
+  
+  // ===== ВХОД =====
+  if (loginBtn) {
+    loginBtn.addEventListener('click', function() {
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      
+      if (!email || !password) {
+        showError('loginError', 'Введите email и пароль');
+        return;
+      }
+      
+      loginBtn.textContent = '⏳ Вход...';
+      loginBtn.disabled = true;
+      
+      firebase.auth().signInWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+          const user = userCredential.user;
+          
+          if (!user.emailVerified) {
+            firebase.auth().signOut();
+            showError('loginError', '⚠️ Email не подтверждён! Проверьте почту.');
+            loginBtn.textContent = '🔑 Войти';
+            loginBtn.disabled = false;
+            return;
+          }
+          
+          console.log('✅ Пользователь вошёл:', user.email);
+          authModal.style.display = 'none';
+          clearAllMessages();
+          alert('✅ Добро пожаловать, ' + user.email + '!');
+          
+          loginBtn.textContent = ' Войти';
+          loginBtn.disabled = false;
+        })
+        .catch((error) => {
+          console.error('Ошибка входа:', error);
+          showError('loginError', translateFirebaseError(error));
+          loginBtn.textContent = '🔑 Войти';
+          loginBtn.disabled = false;
         });
     });
-    </script>
+  }
+  
+  // ===== РЕГИСТРАЦИЯ =====
+  if (registerBtn) {
+    registerBtn.addEventListener('click', function() {
+      const email = document.getElementById('registerEmail').value.trim();
+      const password = document.getElementById('registerPassword').value;
+      const confirm = document.getElementById('registerPasswordConfirm').value;
+      
+      if (!email || !password || !confirm) {
+        showError('registerError', 'Заполните все поля');
+        return;
+      }
+      
+      if (password !== confirm) {
+        showError('registerError', 'Пароли не совпадают');
+        return;
+      }
+      
+      if (password.length < 6) {
+        showError('registerError', 'Пароль должен быть не менее 6 символов');
+        return;
+      }
+      
+      registerBtn.textContent = ' Регистрация...';
+      registerBtn.disabled = true;
+      
+      firebase.auth().createUserWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+          const user = userCredential.user;
+          return user.sendEmailVerification().then(() => {
+            console.log('Письмо отправлено на:', user.email);
+            showSuccess('registerSuccess', '✅ Аккаунт создан! Проверьте почту ' + email + ' (и папку "Спам").');
+            registerBtn.textContent = '🔑 Зарегистрироваться';
+            registerBtn.disabled = false;
+            return firebase.auth().signOut();
+          });
+        })
+        .then(() => {
+          setTimeout(() => loginTab.click(), 3000);
+        })
+        .catch((error) => {
+          console.error('Ошибка регистрации:', error);
+          showError('registerError', translateFirebaseError(error));
+          registerBtn.textContent = '🔑 Зарегистрироваться';
+          registerBtn.disabled = false;
+        });
+    });
+  }
+  
+  // ===== ВОССТАНОВЛЕНИЕ ПАРОЛЯ =====
+  if (forgotBtn) {
+    forgotBtn.addEventListener('click', function() {
+      const email = document.getElementById('forgotEmail').value.trim();
+      
+      if (!email) {
+        showError('forgotError', 'Введите email');
+        return;
+      }
+      
+      forgotBtn.textContent = '⏳ Отправка...';
+      forgotBtn.disabled = true;
+      
+      firebase.auth().sendPasswordResetEmail(email)
+        .then(() => {
+          console.log('Письмо отправлено на:', email);
+          showSuccess('forgotSuccess', '✅ Ссылка отправлена на ' + email);
+          forgotBtn.textContent = '📨 Отправить ссылку';
+          forgotBtn.disabled = false;
+        })
+        .catch((error) => {
+          console.error('Ошибка:', error);
+          showError('forgotError', translateFirebaseError(error));
+          forgotBtn.textContent = '📨 Отправить ссылку';
+          forgotBtn.disabled = false;
+        });
+    });
+  }
+  
+  // ===== СЛУШАТЕЛЬ СОСТОЯНИЯ ВХОДА =====
+  firebase.auth().onAuthStateChanged((user) => {
+    const authBtnEl = document.getElementById('authBtn');
+    if (user) {
+      console.log('✅ Пользователь вошёл:', user.email);
+      authBtnEl.textContent = '👤 Профиль';
+    } else {
+      console.log('🔑 Пользователь не авторизован');
+      authBtnEl.textContent = '🔑 Войти';
+    }
+  });
+});
+</script>
 
-    <!-- МОДАЛЬНОЕ ОКНО ПОДДЕРЖКИ ПРОЕКТА -->
-    <div id="supportModal" class="modal support-modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>💝 Поддержать проект</h2>
-            <div class="support-content">
-                <p>Если вам нравится игра, вы можете поддержать её развитие!</p>
-                
-                <div class="card-info">
-                    <p> Номер карты:</p>
-                    <div class="card-number">
-                        <span class="card-digits">2202 2081 5080 9037</span>
-                        <button class="copy-btn" onclick="copyCardNumber()">📋 Копировать</button>
-                    </div>
-                    <p class="bank-info">Сбербанк</p>
-                </div>
-
-                <div class="support-thanks">
-                    <p>💖 Спасибо за вашу поддержку! Каждый рубль помогает развивать проект.</p>
-                </div>
-            </div>
-        </div>
-    </div>
 </body>
 </html>

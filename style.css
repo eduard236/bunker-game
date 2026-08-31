@@ -1925,3 +1925,24 @@ select:focus {
   opacity: 1;
   color: var(--green);
 }
+
+/* ============================================================
+   ИСПРАВЛЕНИЕ ЦЕНТРИРОВАНИЯ МОДАЛЬНОГО ОКНА АВТОРИЗАЦИИ
+   ============================================================ */
+.auth-modal-content {
+  max-width: 450px !important;
+  width: 90% !important;
+  margin: 5% auto !important;
+  text-align: center;
+}
+
+/* Убираем конфликт с мобильной адаптацией для окна авторизации */
+@media (max-width: 768px) {
+  .auth-modal-content {
+    max-width: 92% !important;
+    width: 92% !important;
+    margin: 10% auto !important;
+    min-height: auto !important;
+    border-radius: 12px !important;
+  }
+}
