@@ -388,6 +388,275 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 </script>
+<script>
+// ===== МОДАЛЬНОЕ ОКНО АВТОРИЗАЦИИ + FIREBASE AUTH =====
+document.addEventListener('DOMContentLoaded', function() {
+  const authModal = document.getElementById('authModal');
+  const authBtn = document.getElementById('authBtn');
+  const closeBtn = authModal ? authModal.querySelector('.close') : null;
+  
+  // Вкладки
+  const loginTab = document.querySelector('[data-tab="login"]');
+  const registerTab = document.querySelector('[data-tab="register"]');
+  const loginForm = document.getElementById('loginForm');
+  const registerForm = document.getElementById('registerForm');
+  const forgotForm = document.getElementById('forgotForm');
+  
+  // Кнопки форм
+  const loginBtn = document.getElementById('loginBtn');
+  const registerBtn = document.getElementById('registerBtn');
+  const forgotBtn = document.getElementById('forgotBtn');
+  const backToLoginBtn = document.getElementById('backToLoginBtn');
+  const forgotPasswordLink = document.getElementById('forgotPasswordLink');
+  
+  // ===== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ =====
+  function showError(elementId, message) {
+    const errorEl = document.getElementById(elementId);
+    if (errorEl) {
+      errorEl.textContent = message;
+      errorEl.classList.add('show');
+      setTimeout(() => errorEl.classList.remove('show'), 6000);
+    }
+  }
+  
+  function showSuccess(elementId, message) {
+    const successEl = document.getElementById(elementId);
+    if (successEl) {
+      successEl.textContent = message;
+      successEl.classList.add('show');
+      setTimeout(() => successEl.classList.remove('show'), 6000);
+    }
+  }
+  
+  function clearAllMessages() {
+    ['loginError', 'registerError', 'forgotError', 'forgotSuccess'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.textContent = '';
+        el.classList.remove('show');
+      }
+    });
+  }
+  
+  // Перевод ошибок Firebase на русский
+  function translateFirebaseError(error) {
+    const code = error.code;
+    const messages = {
+      'auth/email-already-in-use': 'Этот email уже зарегистрирован. Попробуйте войти.',
+      'auth/invalid-email': 'Некорректный формат email.',
+      'auth/weak-password': 'Пароль слишком слабый. Минимум 6 символов.',
+      'auth/user-not-found': 'Пользователь с таким email не найден.',
+      'auth/wrong-password': 'Неверный пароль. Попробуйте ещё раз.',
+      'auth/too-many-requests': 'Слишком много попыток. Подождите немного и попробуйте снова.',
+      'auth/network-request-failed': 'Ошибка сети. Проверьте подключение к интернету.',
+      'auth/operation-not-allowed': 'Вход по email/паролю не включён в настройках Firebase.',
+      'auth/popup-closed-by-user': 'Окно было закрыто.',
+      'auth/requires-recent-login': 'Требуется повторный вход. Выйдите и войдите снова.',
+      'auth/user-disabled': 'Этот аккаунт заблокирован.',
+      'auth/invalid-credential': 'Неверные данные для входа. Проверьте email и пароль.'
+    };
+    return messages[code] || 'Произошла ошибка: ' + error.message;
+  }
+  
+  // ===== ОТКРЫТИЕ/ЗАКРЫТИЕ ОКНА =====
+  if (authBtn) {
+    authBtn.addEventListener('click', function() {
+      clearAllMessages();
+      if (authModal) authModal.style.display = 'block';
+    });
+  }
+  
+  if (closeBtn) {
+    closeBtn.addEventListener('click', function() {
+      authModal.style.display = 'none';
+      clearAllMessages();
+    });
+  }
+  
+  if (authModal) {
+    window.addEventListener('click', function(e) {
+      if (e.target === authModal) {
+        authModal.style.display = 'none';
+        clearAllMessages();
+      }
+    });
+  }
+  
+  // ===== ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК =====
+  if (loginTab) {
+    loginTab.addEventListener('click', function() {
+      loginTab.classList.add('active');
+      registerTab.classList.remove('active');
+      loginForm.style.display = 'block';
+      registerForm.style.display = 'none';
+      forgotForm.style.display = 'none';
+      clearAllMessages();
+    });
+  }
+  
+  if (registerTab) {
+    registerTab.addEventListener('click', function() {
+      registerTab.classList.add('active');
+      loginTab.classList.remove('active');
+      loginForm.style.display = 'none';
+      registerForm.style.display = 'block';
+      forgotForm.style.display = 'none';
+      clearAllMessages();
+    });
+  }
+  
+  // ===== ВОССТАНОВЛЕНИЕ ПАРОЛЯ =====
+  if (forgotPasswordLink) {
+    forgotPasswordLink.addEventListener('click', function(e) {
+      e.preventDefault();
+      loginForm.style.display = 'none';
+      registerForm.style.display = 'none';
+      forgotForm.style.display = 'block';
+      clearAllMessages();
+    });
+  }
+  
+  if (backToLoginBtn) {
+    backToLoginBtn.addEventListener('click', function() {
+      forgotForm.style.display = 'none';
+      loginForm.style.display = 'block';
+      clearAllMessages();
+    });
+  }
+  
+  // ===== ВХОД В АККАУНТ =====
+  if (loginBtn) {
+    loginBtn.addEventListener('click', function() {
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      
+      if (!email || !password) {
+        showError('loginError', 'Введите email и пароль');
+        return;
+      }
+      
+      // Показываем загрузку
+      loginBtn.textContent = '⏳ Вход...';
+      loginBtn.disabled = true;
+      
+      firebase.auth().signInWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+          const user = userCredential.user;
+          
+          // Проверяем, подтверждён ли email
+          if (!user.emailVerified) {
+            firebase.auth().signOut();
+            showError('loginError', '⚠️ Email не подтверждён! Проверьте почту и перейдите по ссылке из письма.');
+            loginBtn.textContent = '🔑 Войти';
+            loginBtn.disabled = false;
+            return;
+          }
+          
+          // Успешный вход
+          console.log('Вход выполнен:', user.email);
+          authModal.style.display = 'none';
+          clearAllMessages();
+          alert('✅ Добро пожаловать в бункер, ' + user.email + '!');
+          
+          loginBtn.textContent = '🔑 Войти';
+          loginBtn.disabled = false;
+        })
+        .catch((error) => {
+          console.error('Ошибка входа:', error);
+          showError('loginError', translateFirebaseError(error));
+          loginBtn.textContent = '🔑 Войти';
+          loginBtn.disabled = false;
+        });
+    });
+  }
+  
+  // ===== РЕГИСТРАЦИЯ =====
+  if (registerBtn) {
+    registerBtn.addEventListener('click', function() {
+      const email = document.getElementById('registerEmail').value.trim();
+      const password = document.getElementById('registerPassword').value;
+      const confirm = document.getElementById('registerPasswordConfirm').value;
+      
+      if (!email || !password || !confirm) {
+        showError('registerError', 'Заполните все поля');
+        return;
+      }
+      
+      if (password !== confirm) {
+        showError('registerError', 'Пароли не совпадают');
+        return;
+      }
+      
+      if (password.length < 6) {
+        showError('registerError', 'Пароль должен быть не менее 6 символов');
+        return;
+      }
+      
+      // Показываем загрузку
+      registerBtn.textContent = '⏳ Регистрация...';
+      registerBtn.disabled = true;
+      
+      firebase.auth().createUserWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+          const user = userCredential.user;
+          
+          // Отправляем письмо подтверждения
+          return user.sendEmailVerification().then(() => {
+            console.log('Письмо подтверждения отправлено на:', user.email);
+            showSuccess('registerError', '✅ Аккаунт создан! Мы отправили письмо подтверждения на ' + email + '. Проверьте почту (и папку "Спам").');
+            registerBtn.textContent = '🔑 Зарегистрироваться';
+            registerBtn.disabled = false;
+            
+            // Автоматически выходим — пусть пользователь подтвердит email и войдёт
+            return firebase.auth().signOut();
+          });
+        })
+        .then(() => {
+          // Переключаемся на вкладку входа через 3 секунды
+          setTimeout(() => {
+            loginTab.click();
+          }, 3000);
+        })
+        .catch((error) => {
+          console.error('Ошибка регистрации:', error);
+          showError('registerError', translateFirebaseError(error));
+          registerBtn.textContent = '🔑 Зарегистрироваться';
+          registerBtn.disabled = false;
+        });
+    });
+  }
+  
+  // ===== ВОССТАНОВЛЕНИЕ ПАРОЛЯ =====
+  if (forgotBtn) {
+    forgotBtn.addEventListener('click', function() {
+      const email = document.getElementById('forgotEmail').value.trim();
+      
+      if (!email) {
+        showError('forgotError', 'Введите email');
+        return;
+      }
+      
+      // Показываем загрузку
+      forgotBtn.textContent = '⏳ Отправка...';
+      forgotBtn.disabled = true;
+      
+      firebase.auth().sendPasswordResetEmail(email)
+        .then(() => {
+          console.log('Письмо для сброса пароля отправлено на:', email);
+          showSuccess('forgotSuccess', '✅ Ссылка для восстановления пароля отправлена на ' + email + '. Проверьте почту (и папку "Спам").');
+          forgotBtn.textContent = '📨 Отправить ссылку';
+          forgotBtn.disabled = false;
+        })
+        .catch((error) => {
+          console.error('Ошибка восстановления:', error);
+          showError('forgotError', translateFirebaseError(error));
+          forgotBtn.textContent = '📨 Отправить ссылку';
+          forgotBtn.disabled = false;
+        });
+    });
+  }
+});
+</script>
 <script src="script.js" defer></script>
 <script src="online.js" defer></script>
 </body>
