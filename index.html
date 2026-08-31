@@ -949,6 +949,25 @@ document.querySelectorAll('.password-toggle').forEach(function(toggle) {
     }
   });
 });
+// ===== ФУНКЦИЯ ПОКАЗА/СКРЫТИЯ ПАРОЛЯ (ГЛАЗКИ) =====
+document.querySelectorAll('.password-toggle').forEach(function(toggle) {
+  toggle.addEventListener('click', function() {
+    var targetId = this.getAttribute('data-target');
+    var passwordInput = document.getElementById(targetId);
+    
+    if (passwordInput) {
+      if (passwordInput.getAttribute('type') === 'password') {
+        passwordInput.setAttribute('type', 'text');
+        this.textContent = '';
+        this.classList.add('active');
+      } else {
+        passwordInput.setAttribute('type', 'password');
+        this.textContent = '👁';
+        this.classList.remove('active');
+      }
+    }
+  });
+});
 });
 </script>
 </body>
