@@ -8,16 +8,11 @@ const firebaseConfig = {
   messagingSenderId: "426208884322",
   appId: "1:426208884322:web:c4749976e5e7fe1fdec33b"
 };
-
 window.FB_OK = false;
 try {
   if (window.firebase && String(firebaseConfig.apiKey).indexOf('PASTE') === -1) {
     firebase.initializeApp(firebaseConfig);
     window.FB_OK = true;
   }
-} catch (e) { 
-  window.FB_OK = false; 
-  console.error('Firebase init error:', e);
-}
-
+} catch (e) { window.FB_OK = false; }
 console.log('BUNKER: firebase =', typeof window.firebase, '| FB_OK =', window.FB_OK);
