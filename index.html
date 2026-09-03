@@ -235,6 +235,84 @@
   </div>
 </div>
 
+<!-- ПРОФИЛЬ -->
+<div id="profileModal" class="modal">
+  <div class="modal-content profile-modal-content">
+    <span class="close" id="profileClose">&times;</span>
+    <h2>👤 МОЙ ПРОФИЛЬ</h2>
+    
+    <div class="profile-info">
+      <div class="profile-field">
+        <label>📧 Email</label>
+        <div class="profile-value" id="profileEmail">—</div>
+      </div>
+      
+      <div class="profile-field">
+        <label>🎭 Никнейм</label>
+        <div class="profile-edit-row">
+          <input type="text" id="profileNickname" placeholder="Name not specified" maxlength="20">
+          <button class="action-btn profile-save-btn" id="saveNickname">💾</button>
+        </div>
+        <div id="nicknameMsg" class="profile-msg"></div>
+      </div>
+    </div>
+    
+    <div class="profile-stats">
+      <h3>📊 Статистика миссий</h3>
+      
+      <div class="stat-card stat-success">
+        <div class="stat-header">
+          <span class="stat-icon">🕵️</span>
+          <span class="stat-name">Агент под прикрытием</span>
+          <button class="stat-info-btn" data-stat="success">❓</button>
+        </div>
+        <div class="stat-value" id="statSuccess">0</div>
+      </div>
+      
+      <div class="stat-card stat-partial">
+        <div class="stat-header">
+          <span class="stat-icon">🕯️</span>
+          <span class="stat-name">Герой-мученик</span>
+          <button class="stat-info-btn" data-stat="partial">❓</button>
+        </div>
+        <div class="stat-value" id="statPartial">0</div>
+      </div>
+      
+      <div class="stat-card stat-fail-exiled">
+        <div class="stat-header">
+          <span class="stat-icon">️</span>
+          <span class="stat-name">Изгнан в пустошь</span>
+          <button class="stat-info-btn" data-stat="failExiled">❓</button>
+        </div>
+        <div class="stat-value" id="statFailExiled">0</div>
+      </div>
+      
+      <div class="stat-card stat-fail-survived">
+        <div class="stat-header">
+          <span class="stat-icon">🎭</span>
+          <span class="stat-name">Сорвавшееся прикрытие</span>
+          <button class="stat-info-btn" data-stat="failSurvived">❓</button>
+        </div>
+        <div class="stat-value" id="statFailSurvived">0</div>
+      </div>
+    </div>
+    
+    <div class="profile-actions">
+      <button class="action-btn profile-menu-btn" id="goToMenu">🏠 Главное меню</button>
+      <button class="action-btn profile-logout-btn" id="logoutBtn">🚪 Выйти из аккаунта</button>
+    </div>
+  </div>
+</div>
+
+<!-- МОДАЛКА С ПОЯСНЕНИЕМ СТАТИСТИКИ -->
+<div id="statInfoModal" class="modal">
+  <div class="modal-content stat-info-modal-content">
+    <span class="close" id="statInfoClose">&times;</span>
+    <h2 id="statInfoTitle">—</h2>
+    <p id="statInfoText">—</p>
+  </div>
+</div>
+
 <script src="firebase-app-compat.js" defer></script>
 <script src="firebase-database-compat.js" defer></script>
 <script src="firebase-auth-compat.js" defer></script>
@@ -596,6 +674,152 @@ document.addEventListener('DOMContentLoaded', function() {
       updateAuthButtonVisibility();
     }
   });
+
+// ===== МОДАЛЬНОЕ ОКНО ПРОФИЛЯ =====
+const profileModal = document.getElementById('profileModal');
+const profileClose = document.getElementById('profileClose');
+const statInfoModal = document.getElementById('statInfoModal');
+const statInfoClose = document.getElementById('statInfoClose');
+
+// Описания статистики
+const statDescriptions = {
+  success: '🕵️ Агент под прикрытием\n\nПобеда — ты выжил в бункере и полностью выполнил свою секретную миссию.\n\nЕсли твоя миссия была Спасти игрока — он остался с тобой.\nЕсли Предатель — твоя цель была изгнана, а ты остался.\nЕсли Специалист или Хранитель — нужный игрок с профессией/багажом выжил вместе с тобой.\n\nИтог: ты остался в бункере, миссия выполнена.',
+  
+  partial: '🕯️ Герой-мученик\n\nЖертва — ты выполнил свою миссию, но сам покинул бункер.\n\nТы пожертвовал собой ради цели. Например, спас нужного игрока, но был изгнан.\nИли добился изгнания своей цели, но и сам ушёл.\n\nИтог: миссия выполнена, но в финале тебя не оказалось среди выживших.',
+  
+  failExiled: '☢️ Изгнан в пустошь\n\nПровал (изгнан) — ты покинул бункер, и твоя миссия не выполнена.\n\nТы не смог спасти цель (или добиться её изгнания), и сам был выгнан в ходе обсуждения.\n\nИтог: ни миссия, ни выживание.',
+  
+  failSurvived: ' Сорвавшееся прикрытие\n\nПровал (выжил) — ты остался в бункере, но миссия не выполнена.\n\nТы выжил, но твоя цель оказалась не достигнута. Например, ты не смог спасти игрока, которого нужно было защитить, или не добился изгнания врага.\n\nИтог: ты выжил, но миссия провалена.'
+};
+
+// Открытие профиля
+firebase.auth().onAuthStateChanged((user) => {
+  const authBtnEl = document.getElementById('authBtn');
+  if (user) {
+    authBtnEl.textContent = '👤 Профиль';
+    document.getElementById('profileEmail').textContent = user.email;
+    
+    // Загрузка никнейма из Firebase
+    firebase.database().ref('users/' + user.uid).once('value').then((snapshot) => {
+      const data = snapshot.val();
+      if (data && data.nickname) {
+        document.getElementById('profileNickname').value = data.nickname;
+      }
+    });
+    
+    // Загрузка статистики
+    firebase.database().ref('users/' + user.uid + '/stats').once('value').then((snapshot) => {
+      const stats = snapshot.val();
+      if (stats) {
+        document.getElementById('statSuccess').textContent = stats.success || 0;
+        document.getElementById('statPartial').textContent = stats.partial || 0;
+        document.getElementById('statFailExiled').textContent = stats.failExiled || 0;
+        document.getElementById('statFailSurvived').textContent = stats.failSurvived || 0;
+      }
+    });
+  } else {
+    authBtnEl.textContent = '🔑 Войти';
+  }
+});
+
+// Обработчик кнопки профиля
+authBtn.addEventListener('click', function() {
+  const user = firebase.auth().currentUser;
+  if (user) {
+    profileModal.style.display = 'block';
+  } else {
+    clearAllMessages();
+    authModal.style.display = 'block';
+  }
+});
+
+// Закрытие профиля
+if (profileClose) {
+  profileClose.addEventListener('click', function() {
+    profileModal.style.display = 'none';
+  });
+}
+
+// Сохранение никнейма
+const saveNicknameBtn = document.getElementById('saveNickname');
+if (saveNicknameBtn) {
+  saveNicknameBtn.addEventListener('click', function() {
+    const user = firebase.auth().currentUser;
+    if (!user) return;
+    
+    const nickname = document.getElementById('profileNickname').value.trim();
+    if (!nickname) {
+      document.getElementById('nicknameMsg').textContent = 'Введите никнейм';
+      document.getElementById('nicknameMsg').style.color = 'var(--red)';
+      return;
+    }
+    
+    firebase.database().ref('users/' + user.uid).update({
+      nickname: nickname
+    }).then(() => {
+      document.getElementById('nicknameMsg').textContent = '✓ Никнейм сохранён';
+      document.getElementById('nicknameMsg').style.color = 'var(--green)';
+      setTimeout(() => {
+        document.getElementById('nicknameMsg').textContent = '';
+      }, 3000);
+    }).catch((error) => {
+      document.getElementById('nicknameMsg').textContent = 'Ошибка: ' + error.message;
+      document.getElementById('nicknameMsg').style.color = 'var(--red)';
+    });
+  });
+}
+
+// Кнопка "Главное меню"
+const goToMenuBtn = document.getElementById('goToMenu');
+if (goToMenuBtn) {
+  goToMenuBtn.addEventListener('click', function() {
+    profileModal.style.display = 'none';
+  });
+}
+
+// Кнопка "Выйти"
+const logoutBtn = document.getElementById('logoutBtn');
+if (logoutBtn) {
+  logoutBtn.addEventListener('click', function() {
+    firebase.auth().signOut().then(() => {
+      profileModal.style.display = 'none';
+      alert('Вы вышли из аккаунта');
+    }).catch((error) => {
+      alert('Ошибка выхода: ' + error.message);
+    });
+  });
+}
+
+// Кнопки ❓ с пояснениями
+document.querySelectorAll('.stat-info-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    const statType = this.getAttribute('data-stat');
+    const description = statDescriptions[statType];
+    
+    if (description) {
+      document.getElementById('statInfoTitle').textContent = description.split('\n')[0];
+      document.getElementById('statInfoText').textContent = description.split('\n').slice(2).join('\n');
+      statInfoModal.style.display = 'block';
+    }
+  });
+});
+
+// Закрытие модалки с пояснением
+if (statInfoClose) {
+  statInfoClose.addEventListener('click', function() {
+    statInfoModal.style.display = 'none';
+  });
+}
+
+// Закрытие по клику вне окна
+window.addEventListener('click', function(e) {
+  if (e.target === profileModal) {
+    profileModal.style.display = 'none';
+  }
+  if (e.target === statInfoModal) {
+    statInfoModal.style.display = 'none';
+  }
+});
 });
 </script>
 </body>
