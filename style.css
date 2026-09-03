@@ -1284,8 +1284,8 @@ select:focus {
    ============================================================ */
 @media (max-width: 768px) {
   .container {
-    padding: 10px 10px 28px;
-  }
+  padding: 50px 10px 28px;
+}
   .topbar {
     justify-content: center;
     text-align: center;
@@ -1582,8 +1582,8 @@ select:focus {
 }
 
 /* ============================================================
-   КНОПКИ АВТОРИЗАЦИИ (ВЕРХНИЙ ПРАВЫЙ УГОЛ)
-   ============================================================ */
+КНОПКИ АВТОРИЗАЦИИ (ВЕРХНИЙ ПРАВЫЙ УГОЛ)
+============================================================ */
 .auth-buttons {
   position: fixed;
   top: 20px;
@@ -1592,6 +1592,56 @@ select:focus {
   z-index: 9998;
   display: flex;
   gap: 8px;
+}
+
+.auth-btn-small {
+  background: rgba(10, 14, 12, 0.95);
+  border: 1px solid var(--amber-deep);
+  color: var(--amber);
+  padding: 8px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  transition: all 0.25s ease;
+  box-shadow: 0 0 8px rgba(255, 182, 72, 0.1);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.auth-btn-small:hover {
+  background: rgba(255, 182, 72, 0.15);
+  border-color: var(--amber);
+  transform: translateY(-2px);
+  box-shadow: 0 0 12px rgba(255, 182, 72, 0.3);
+}
+
+/* Мобильная адаптация */
+@media (max-width: 768px) {
+  .auth-buttons {
+    top: 8px;
+    right: 8px;
+    left: auto;
+  }
+  
+  .auth-btn-small {
+    font-size: 0.65rem;
+    padding: 6px 10px;
+    background: rgba(10, 14, 12, 0.85);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+  
+  /* Добавляем отступ сверху для контента, чтобы кнопка не перекрывала текст */
+  .container {
+    padding-top: 50px;
+  }
+  
+  .topbar {
+    padding-top: 10px;
+  }
 }
 
 .auth-btn-small {
@@ -2002,4 +2052,35 @@ select:focus {
 /* Скрытие кнопки при открытых модальных окнах */
 body.modal-open .auth-buttons {
   display: none !important;
+}
+
+/* Стили для иконки и текста кнопки авторизации */
+.auth-btn-icon {
+  display: inline-block;
+  margin-right: 4px;
+}
+
+.auth-btn-text {
+  display: inline-block;
+}
+
+/* На мобильных устройствах показываем только иконку */
+@media (max-width: 480px) {
+  .auth-btn-text {
+    display: none;
+  }
+  
+  .auth-btn-icon {
+    margin-right: 0;
+    font-size: 1.1rem;
+  }
+  
+  .auth-btn-small {
+    padding: 8px 10px;
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
