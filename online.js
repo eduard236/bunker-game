@@ -1,4 +1,4 @@
-/* BUNKE/* BUNKER ONLINE v3.1 — комнаты на Firebase Realtime Database */
+/* BUNKER ONLINE v3.2 — комнаты на Firebase Realtime Database */
 (function () {
 const TRAIT_KEYS = [
   ['profession', 'Профессия'], ['health', 'Здоровье'], ['phobia', 'Фобия'],
@@ -129,7 +129,7 @@ function renderLobby(mc) {
     '<div class="invite-box"><p>Отправьте друзьям ссылку или код:</p><div class="invite-line"><span class="invite-link">' + esc(link) + '</span>' +
     '<button class="action-btn" id="olCopyLink">📋 Ссылка</button><button class="action-btn" id="olCopyCode">🔑 Код ' + roomCode + '</button></div></div>' +
     '<div class="timer-box" id="room-timer-box"><strong>Комната истекает через:</strong> <span id="room-timer">05:00</span></div>' +
-'<div class="lobby-players"><h3>Выжившие (' + list.length + '/15):</h3>' +
+    '<div class="lobby-players"><h3>Выжившие (' + list.length + '/15):</h3>' +
     list.map(p => '<div class="lobby-player">' + (p.index + 1) + '. ' + esc(p.name) + (p.pid === myPid ? ' (вы)' : '') + (p.pid === roomData.hostId ? ' 👑' : '') + '</div>').join('') + '</div>' +
     (isHost()
       ? '<div class="setting-card"><h3>Предыстория</h3><select id="olBackstory">' + backstoryOptions(roomData.backstoryIndex || 0) + '</select></div>' +
@@ -140,33 +140,33 @@ function renderLobby(mc) {
   $on('olCopyLink').addEventListener('click', () => copyText(link, 'Ссылка скопирована'));
   $on('olCopyCode').addEventListener('click', () => copyText(roomCode, 'Код скопирован'));
   $on('olLeave').addEventListener('click', () => leaveRoom());
-    if (isHost()) {
+  if (isHost()) {
     $on('olBackstory').addEventListener('change', (e) => roomRef.update({ backstoryIndex: parseInt(e.target.value, 10) }));
     const st = $on('olStart'); if (st) st.addEventListener('click', startOnlineGame);
   }
 
-        // ===== ТАЙМЕР КОМНАТЫ (5 минут) =====
-    const timerEl = document.getElementById('room-timer');
-    if (timerEl && roomData.expiresAt) {
-      let timerInterval;
-      const updateTimer = () => {
-        const diff = roomData.expiresAt - Date.now();
-        if (diff <= 0) {
-          clearInterval(timerInterval);
-          timerEl.textContent = '00:00';
-          roomRef.remove();
-          toast('Время вышло! Комната удалена.');
-          leaveRoom(false);
-        } else {
-          const min = Math.floor(diff / 60000);
-          const sec = Math.floor((diff % 60000) / 1000);
-          timerEl.textContent = String(min).padStart(2, '0') + ':' + String(sec).padStart(2, '0');
-        }
-      };
-      updateTimer();
-      timerInterval = setInterval(updateTimer, 1000);
-    }
+  // ===== ТАЙМЕР КОМНАТЫ (5 минут) =====
+  const timerEl = document.getElementById('room-timer');
+  if (timerEl && roomData.expiresAt) {
+    let timerInterval;
+    const updateTimer = () => {
+      const diff = roomData.expiresAt - Date.now();
+      if (diff <= 0) {
+        clearInterval(timerInterval);
+        timerEl.textContent = '00:00';
+        roomRef.remove();
+        toast('Время вышло! Комната удалена.');
+        leaveRoom(false);
+      } else {
+        const min = Math.floor(diff / 60000);
+        const sec = Math.floor((diff % 60000) / 1000);
+        timerEl.textContent = String(min).padStart(2, '0') + ':' + String(sec).padStart(2, '0');
+      }
+    };
+    updateTimer();
+    timerInterval = setInterval(updateTimer, 1000);
   }
+}
 
 function renderMissions(mc) {
   const idx = myIndex(); const me = roomData.players[myPid];
@@ -203,7 +203,7 @@ function renderGame(mc) {
       const visible = isMe || rev[key];
       rows += '<div class="trait online-trait"><strong>' + label + ':</strong> ' +
         (visible ? '<span class="trait-val">' + esc(role[key]) + '</span>' : '<span class="trait-hidden">???</span>') +
-        (isMe && !rev[key] ? ' <button class="reveal-btn" data-key="' + key + '">👁 открыть всем</button>' : '') +
+        (isMe && !rev[key] ? ' <button class="reveal-btn" data-key="' + key + '"> открыть всем</button>' : '') +
         (rev[key] ? ' <span class="revealed-mark" title="Видно всем">👁</span>' : '') + '</div>';
     });
     cards += '<div class="player-card ' + (isEx ? 'exiled' : '') + '"><div class="player-header"><h3>Игрок ' + (i + 1) + ' · ' + esc(p.name) + '</h3><span class="player-number">#' + (i + 1) + '</span>' +
@@ -227,7 +227,7 @@ function renderGame(mc) {
 
 function renderFinished(mc) {
   const list = playersByIndex(roomData); const exiled = roomData.exiled || {}; const missions = roomData.missions || {};
-  const outcomes = { success: ['✅ УСПЕХ', 'outcome-success'], partial: ['⚠️ ЧАСТИЧНЫЙ УСПЕХ', 'outcome-partial'], fail: ['❌ ПРОВАЛ', 'outcome-fail'] };
+  const outcomes = { success: ['✅ УСПЕХ', 'outcome-success'], partial: ['️ ЧАСТИЧНЫЙ УСПЕХ', 'outcome-partial'], fail: ['❌ ПРОВАЛ', 'outcome-fail'] };
   let html = '';
   Object.keys(missions).forEach(k => {
     const m = missions[k]; const holderEx = !!exiled[m.playerIndex]; const targetEx = !!exiled[m.targetPlayerIndex];
@@ -257,46 +257,62 @@ document.addEventListener('DOMContentLoaded', () => {
   if (bc) bc.addEventListener('click', () => window.createRoomOnline());
   if (bj) bj.addEventListener('click', () => window.joinRoomOnline());
   if (location.search.indexOf('room=') !== -1) {
-  const onlineCounter = document.getElementById('bunker-online');
-  if (onlineCounter) onlineCounter.style.display = 'none';
+    const onlineCounter = document.getElementById('bunker-online');
+    if (onlineCounter) onlineCounter.style.display = 'none';
   }
   const m = location.search.match(/room=([A-Za-z0-9]+)/);
   if (m) { if (window.FB_OK) window.joinRoomOnline(m[1]); else toast('Онлайн не настроен: проверь файл firebase-config.js'); }
 
-// ============ РЕАЛЬНЫЙ СЧЁТЧИК ОНЛАЙНА ============
-if (window.FB_OK) {
-  // Проверяем все комнаты и удаляем просроченные
-  const roomsRef = firebase.database().ref('rooms');
-  roomsRef.once('value').then((snap) => {
-    const now = Date.now();
-    snap.forEach((child) => {
-      const room = child.val();
-      if (room && room.expiresAt && now > room.expiresAt) {
-        // Если время истекло — удаляем комнату
-        child.ref.remove();
+  // ============ РЕАЛЬНЫЙ СЧЁТЧИК ОНЛАЙНА (ИСПРАВЛЕННЫЙ) ============
+  if (window.FB_OK) {
+    console.log('✅ Firebase подключён, инициализируем счётчик онлайна');
+    
+    // Проверяем все комнаты и удаляем просроченные
+    const roomsRef = firebase.database().ref('rooms');
+    roomsRef.once('value').then((snap) => {
+      const now = Date.now();
+      snap.forEach((child) => {
+        const room = child.val();
+        if (room && room.expiresAt && now > room.expiresAt) {
+          child.ref.remove();
+        }
+      });
+    }).catch(err => console.error('Ошибка очистки комнат:', err));
+    
+    // Счётчик присутствия
+    const presenceRef = firebase.database().ref('/presence/' + myPid);
+    const connectedRef = firebase.database().ref('.info/connected');
+
+    console.log('🔗 Подключаемся к Firebase presence...');
+    
+    connectedRef.on('value', (snap) => {
+      console.log('📡 Статус подключения:', snap.val());
+      if (snap.val() === true) {
+        presenceRef.onDisconnect().remove();
+        presenceRef.set(true).then(() => {
+          console.log('✅ Запись presence создана для:', myPid);
+        }).catch(err => {
+          console.error('❌ Ошибка создания presence:', err);
+        });
       }
     });
-  }).catch(err => console.error('Ошибка очистки комнат:', err));
-  
-  // ... (сюда вставь уже существующий код счётчика онлайна)
-  const presenceRef = firebase.database().ref('/presence/' + myPid);
-  const connectedRef = firebase.database().ref('.info/connected');
 
-  // Когда пользователь заходит на сайт, записываем его в базу
-  connectedRef.on('value', (snap) => {
-    if (snap.val() === true) {
-      // Если он закрыл вкладку, запись удалится сама
-      presenceRef.onDisconnect().remove();
-      presenceRef.set(true);
-    }
-  });
-
-  // Следим за количеством людей в базе и обновляем счётчик
-  firebase.database().ref('/presence').on('value', (snap) => {
-    const count = snap.numChildren();
-    const el = document.getElementById('onlineCount');
-    if (el) el.textContent = count;
-  });
-}
+    // Следим за количеством людей в базе и обновляем счётчик
+    firebase.database().ref('/presence').on('value', (snap) => {
+      const count = snap.numChildren();
+      console.log('👥 Количество пользователей онлайн:', count);
+      const el = document.getElementById('onlineCount');
+      if (el) {
+        el.textContent = count;
+        console.log(' Счётчик обновлён:', count);
+      } else {
+        console.warn('⚠️ Элемент onlineCount не найден');
+      }
+    }, (error) => {
+      console.error(' Ошибка чтения presence:', error);
+    });
+  } else {
+    console.warn('️ Firebase не подключён (FB_OK = false)');
+  }
 });
 })();
