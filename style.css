@@ -2304,3 +2304,42 @@ body.modal-open .auth-buttons {
     font-size: 0.8rem;
   }
 }
+
+/* ============================================================
+   КНОПКА "ВЫЙТИ" РЯДОМ С ПРОФИЛЕМ
+   ============================================================ */
+.auth-logout-btn {
+  background: rgba(255, 75, 62, 0.12) !important;
+  border-color: var(--red-deep) !important;
+  color: var(--red) !important;
+  padding: 8px 10px !important;
+  font-size: 1rem !important;
+  min-width: 40px;
+}
+
+.auth-logout-btn:hover {
+  background: rgba(255, 75, 62, 0.25) !important;
+  border-color: var(--red) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 0 10px rgba(255, 75, 62, 0.3);
+}
+
+/* Мобильная адаптация */
+@media (max-width: 768px) {
+  .auth-logout-btn {
+    padding: 6px 8px !important;
+    font-size: 0.9rem !important;
+    min-width: 36px;
+  }
+}
+
+@media (max-width: 480px) {
+  .auth-logout-btn {
+    padding: 8px 10px !important;
+    min-width: 44px;
+    min-height: 44px;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+  }
+}
